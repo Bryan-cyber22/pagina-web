@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoteles en Reynosa - VBDHOTEL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --primary-color: #0071ce;
+            --secondary-color: #ff5a60;
+            --accent-color: #3cd070;
+            --dark-color: #1a1a1a;
+            --light-color: #f8f9fa;
+            --gray-color: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo span {
+            color: var(--secondary-color);
+        }
+        
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .user-actions a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: var(--gray-color);
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .user-actions a:hover {
+            color: var(--primary-color);
+        }
+        
+        .user-actions .btn-register {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+        }
+        
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 20px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+        
+        /* Search Section */
+        .search-section {
+            background-color: white;
+            padding: 30px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-form {
+            background-color: var(--light-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            text-align: left;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        /* Hotel Preview */
+        .hotel-preview {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .hotel-preview h4 {
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .hotel-preview p {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .hotel-preview .price {
+            color: var(--secondary-color);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .search-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .search-btn:hover {
+            background-color: #e04a50;
+        }
+        
+        /* Filters */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-group label {
+            font-weight: 500;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        /* Results Section */
+        .results-section {
+            padding: 40px 0;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .results-count {
+            font-size: 1.2rem;
+            color: var(--gray-color);
+        }
+        
+        .sort-options select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .hotel-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .hotel-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .hotel-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .hotel-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        .hotel-info {
+            padding: 20px;
+        }
+        
+        .hotel-name {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+        
+        .hotel-location {
+            color: var(--gray-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hotel-location i {
+            margin-right: 5px;
+        }
+        
+        .hotel-amenities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .amenity-tag {
+            background-color: var(--light-color);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--gray-color);
+        }
+        
+        .hotel-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .hotel-price span {
+            font-size: 1rem;
+            font-weight: normal;
+            color: var(--gray-color);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: #005fa3;
+        }
+        
+        /* Map Section */
+        .map-section {
+            padding: 40px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            color: var(--dark-color);
+        }
+        
+        #hotel-map {
+            height: 500px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            gap: 10px;
+        }
+        
+        .pagination-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .pagination-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .pagination-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .auth-modal {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .modal-header p {
+            color: var(--gray-color);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group-modal {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group-modal label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-group-modal input, .form-group-modal select, .form-group-modal textarea {
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group-modal input:focus, .form-group-modal select:focus, .form-group-modal textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .auth-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .auth-btn:hover {
+            background-color: #005fa3;
+        }
+
+        .auth-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .modal-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray-color);
+        }
+
+        .modal-switch a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-switch a:hover {
+            text-decoration: underline;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray-color);
+        }
+
+        .close-modal:hover {
+            color: var(--dark-color);
+        }
+
+        /* Success Message */
+        .success-message {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Reservation Modal */
+        .reservation-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 20000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .reservation-modal.active {
+            display: flex;
+        }
+
+        .reservation-content {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .reservation-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .reservation-header img {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .reservation-details {
+            flex: 1;
+        }
+
+        .reservation-details h3 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .reservation-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .reservation-form .form-full {
+            grid-column: span 2;
+        }
+
+        .reservation-summary {
+            background-color: var(--light-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+
+        .reserve-btn {
+            width: 100%;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .reserve-btn:hover {
+            background-color: #e04a50;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 60px 0 20px;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: white;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                z-index: 1000;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                margin: 10px 0;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .auth-modal, .reservation-content {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .reservation-form {
+                grid-template-columns: 1fr;
+            }
+
+            .reservation-form .form-full {
+                grid-column: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal de Autenticación -->
+    <div class="modal-overlay" id="authModal">
+        <div class="auth-modal">
+            <button class="close-modal" onclick="closeAuthModal()">&times;</button>
+            
+            <!-- Registro -->
+            <div id="registerForm" class="auth-content">
+                <div class="modal-header">
+                    <h2>Crear cuenta</h2>
+                    <p>Únete a VBDHOTEL y disfruta de beneficios exclusivos</p>
+                </div>
+                
+                <div class="success-message" id="registerSuccess">
+                    <i class="fas fa-check-circle"></i>
+                    ¡Registro exitoso! Ahora puedes iniciar sesión con tus credenciales.
+                </div>
+                
+                <div class="error-message" id="registerError"></div>
+                
+                <form class="auth-form" id="registerFormElement">
+                    <div class="form-group-modal">
+                        <label for="regName">Nombre completo</label>
+                        <input type="text" id="regName" required>
+                    </div>
+                    
+                    <div class="form-group-modal">
+                        <label for="regEmail">Correo electrónico</label>
+                        <input type="email" id="regEmail" required>
+                    </div>
+                    
+                    <div class="form-group-modal">
+                        <label for="regPhone">Teléfono</label>
+                        <input type="tel" id="regPhone" required>
+                    </div>
+                    
+                    <div class="form-group-modal">
+                        <label for="regPassword">Contraseña</label>
+                        <input type="password" id="regPassword" required minlength="6">
+                    </div>
+                    
+                    <div class="form-group-modal">
+                        <label for="regConfirmPassword">Confirmar contraseña</label>
+                        <input type="password" id="regConfirmPassword" required minlength="6">
+                    </div>
+                    
+                    <button type="submit" class="auth-btn">Crear cuenta</button>
+                </form>
+                
+                <div class="modal-switch">
+                    ¿Ya tienes cuenta? <a href="#" onclick="showLogin()">Iniciar sesión</a>
+                </div>
+            </div>
+            
+            <!-- Login -->
+            <div id="loginForm" class="auth-content" style="display: none;">
+                <div class="modal-header">
+                    <h2>Iniciar sesión</h2>
+                    <p>Accede a tu cuenta de VBDHOTEL</p>
+                </div>
+                
+                <div class="error-message" id="loginError"></div>
+                
+                <form class="auth-form" id="loginFormElement">
+                    <div class="form-group-modal">
+                        <label for="loginEmail">Correo electrónico</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    
+                    <div class="form-group-modal">
+                        <label for="loginPassword">Contraseña</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn">Iniciar sesión</button>
+                </form>
+                
+                <div class="modal-switch">
+                    ¿No tienes cuenta? <a href="#" onclick="showRegister()">Crear cuenta</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Reservación -->
+    <div class="reservation-modal" id="reservationModal">
+        <div class="reservation-content">
+            <button class="close-modal" onclick="closeReservationModal()">&times;</button>
+            
+            <div class="reservation-header">
+                <img id="reservationHotelImage" src="" alt="Hotel">
+                <div class="reservation-details">
+                    <h3 id="reservationHotelName">Hotel Name</h3>
+                    <p id="reservationHotelLocation">Ubicación</p>
+                    <p class="price" id="reservationHotelPrice">$0 por noche</p>
+                </div>
+            </div>
+            
+            <form class="reservation-form" id="reservationForm">
+                <div class="form-group-modal">
+                    <label for="resName">Nombre completo</label>
+                    <input type="text" id="resName" required>
+                </div>
+                
+                <div class="form-group-modal">
+                    <label for="resEmail">Correo electrónico</label>
+                    <input type="email" id="resEmail" required>
+                </div>
+                
+                <div class="form-group-modal">
+                    <label for="resPhone">Teléfono</label>
+                    <input type="tel" id="resPhone" required>
+                </div>
+                
+                <div class="form-group-modal">
+                    <label for="resGuests">Número de huéspedes</label>
+                    <select id="resGuests" required>
+                        <option value="1">1 huésped</option>
+                        <option value="2" selected>2 huéspedes</option>
+                        <option value="3">3 huéspedes</option>
+                        <option value="4">4 huéspedes</option>
+                        <option value="5">5 huéspedes</option>
+                    </select>
+                </div>
+                
+                <div class="form-group-modal">
+                    <label for="resCheckin">Fecha de llegada</label>
+                    <input type="date" id="resCheckin" required>
+                </div>
+                
+                <div class="form-group-modal">
+                    <label for="resCheckout">Fecha de salida</label>
+                    <input type="date" id="resCheckout" required>
+                </div>
+                
+                <div class="form-group-modal form-full">
+                    <label for="resRoomType">Tipo de habitación</label>
+                    <select id="resRoomType" required>
+                        <option value="standard">Habitación Standard</option>
+                        <option value="deluxe">Habitación Deluxe</option>
+                        <option value="suite">Suite</option>
+                        <option value="presidential">Suite Presidencial</option>
+                    </select>
+                </div>
+                
+                <div class="form-group-modal form-full">
+                    <label for="resRequests">Solicitudes especiales (opcional)</label>
+                    <textarea id="resRequests" rows="3"></textarea>
+                </div>
+                
+                <div class="reservation-summary">
+                    <div class="summary-line">
+                        <span>Precio por noche:</span>
+                        <span id="nightlyRate">$0</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Número de noches:</span>
+                        <span id="numberOfNights">0</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">$0</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Impuestos (16%):</span>
+                        <span id="taxes">$0</span>
+                    </div>
+                    <div class="summary-line summary-total">
+                        <span>Total:</span>
+                        <span id="totalAmount">$0</span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="reserve-btn">Confirmar Reservación</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-top">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-hotel"></i>
+                    VBD<span>HOTEL</span>
+                </a>
+                <div class="user-actions" id="userActions">
+                    <a href="#" id="loginLink">Iniciar sesión</a>
+                    <a href="#" id="registerLink" class="btn-register">Registrarse</a>
+                </div>
+            </div>
+            <div class="header-nav">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="hotels.html" class="active">Hoteles</a></li>
+                    <li><a href="destinations.html">Destinos</a></li>
+                    
+                    <li><a href="experiences.html">Experiencias</a></li>
+                    <li><a href="#" id="accountLink">Mi cuenta</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="destination">Hoteles Disponibles</label>
+                        <select id="destination">
+                            <option value="">Selecciona un hotel</option>
+                            <option value="city-express">City Express Reynosa</option>
+                            <option value="holiday-inn">Holiday Inn Reynosa</option>
+                            <option value="fiesta-inn">Fiesta Inn Reynosa</option>
+                            <option value="best-western">Best Western Reynosa</option>
+                            <option value="hotel-san-carlos">Hotel San Carlos</option>
+                            <option value="marriott">Marriott Reynosa</option>
+                            <option value="hampton-inn">Hampton Inn Reynosa</option>
+                            <option value="ibis">Hotel Ibis Reynosa</option>
+                            <option value="colonial">Hotel Colonial</option>
+                            <option value="plaza-real">Plaza Real Hotel</option>
+                            <option value="hotel-astromundo">Hotel Astromundo</option>
+                            <option value="hotel-virrey">Hotel Virrey</option>
+                            <option value="hotel-maria-dolores">Hotel María Dolores</option>
+                            <option value="hotel-posada-real">Hotel Posada Real</option>
+                            <option value="hotel-mansion">Hotel Mansion Reynosa</option>
+                        </select>
+                       
+                    </div>
+                    <div class="form-group">
+                        <label for="checkin">Llegada</label>
+                        <input type="date" id="checkin">
+                    </div>
+                    <div class="form-group">
+                        <label for="checkout">Salida</label>
+                        <input type="date" id="checkout">
+                    </div>
+                    
+                </div>
+                <button class="search-btn" id="searchBtn">Hacer Reservación</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section">
+        <div class="container">
+            <div class="results-header">
+                <div class="results-count">
+                    <span id="resultsCount">15</span> hoteles encontrados en Reynosa
+                </div>
+                <div class="sort-options">
+                    <select id="sortBy">
+                        <option value="recommended">Recomendados</option>
+                        <option value="priceLow">Precio: menor a mayor</option>
+                        <option value="priceHigh">Precio: mayor a menor</option>
+                        <option value="rating">Mejor calificación</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Filtrar por:</label>
+                    <select id="priceFilter">
+                        <option value="">Precio</option>
+                        <option value="0-500">$0 - $500</option>
+                        <option value="500-1000">$500 - $1000</option>
+                        <option value="1000-1500">$1000 - $1500</option>
+                        <option value="1500+">$1500+</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select id="ratingFilter">
+                        <option value="">Calificación</option>
+                        <option value="4">4+ estrellas</option>
+                        <option value="3">3+ estrellas</option>
+                        <option value="2">2+ estrellas</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select id="amenitiesFilter">
+                        <option value="">Servicios</option>
+                        <option value="wifi">Wi-Fi</option>
+                        <option value="pool">Alberca</option>
+                        <option value="breakfast">Desayuno</option>
+                        <option value="parking">Estacionamiento</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="hotel-cards" id="hotelCards">
+                <!-- Hoteles se cargarán dinámicamente -->
+            </div>
+
+            <div class="pagination">
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn">Siguiente</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="container">
+            <h2 class="section-title">Hoteles en el mapa de Reynosa</h2>
+            <div id="hotel-map"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>VBDHOTEL</h3>
+                    <p>Encuentra los mejores hoteles al mejor precio. Compara entre miles de opciones y ahorra hasta un 50%.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Destinos populares</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Reynosa</a></li>
+                        <li><a href="#">Matamoros</a></li>
+                        <li><a href="#">Nuevo Laredo</a></li>
+                        <li><a href="#">Ciudad Victoria</a></li>
+                        <li><a href="#">Tampico</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Enlaces útiles</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html">Sobre nosotros</a></li>
+                        <li><a href="contact.html">Contacto</a></li>
+                        <li><a href="help.html">Ayuda</a></li>
+                        <li><a href="faq.html">Preguntas frecuentes</a></li>
+                        <li><a href="sitemap.html">Mapa del sitio</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="terms.html">Términos y condiciones</a></li>
+                        <li><a href="privacy.html">Política de privacidad</a></li>
+                        <li><a href="cookies.html">Política de cookies</a></li>
+                        <li><a href="legal.html">Aviso legal</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 VBDHOTEL. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Sistema de usuarios registrados (sincronizado con index.html)
+        let registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+        
+        // Base de datos de hoteles de Reynosa (misma que en index.html)
+        const hotels = [
+            {
+                id: 'city-express',
+                name: 'City Express Reynosa',
+                position: [26.0800, -98.3000],
+                price: 850,
+                image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Blvd. Morelos 1000, Reynosa, Tamps.',
+                description: 'Hotel moderno con habitaciones cómodas y desayuno incluido',
+                amenities: ['WiFi gratis', 'Desayuno incluido', 'Gimnasio', 'Centro de negocios'],
+                rating: 4.2
+            },
+            {
+                id: 'holiday-inn',
+                name: 'Holiday Inn Reynosa',
+                position: [26.0600, -98.2900],
+                price: 1200,
+                image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Av. Hidalgo 850, Reynosa, Tamps.',
+                description: 'Hotel de lujo con piscina y restaurante gourmet',
+                amenities: ['Piscina', 'Restaurante', 'Bar', 'Spa', 'WiFi gratis'],
+                rating: 4.5
+            },
+            {
+                id: 'fiesta-inn',
+                name: 'Fiesta Inn Reynosa',
+                position: [26.0700, -98.3100],
+                price: 1100,
+                image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Col. Del Prado, Reynosa, Tamps.',
+                description: 'Hotel ejecutivo ideal para viajes de negocios',
+                amenities: ['Centro de negocios', 'Salones para eventos', 'Gimnasio', 'WiFi gratis'],
+                rating: 4.3
+            },
+            {
+                id: 'best-western',
+                name: 'Best Western Reynosa',
+                position: [26.0750, -98.2950],
+                price: 950,
+                image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Blvd. Miguel Hidalgo 2010, Reynosa, Tamps.',
+                description: 'Hotel cómodo con excelente ubicación céntrica',
+                amenities: ['Restaurante', 'Room service', 'WiFi gratis', 'Estacionamiento'],
+                rating: 4.1
+            },
+            {
+                id: 'hotel-san-carlos',
+                name: 'Hotel San Carlos',
+                position: [26.0650, -98.3050],
+                price: 700,
+                image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Calle Morelos 922, Centro, Reynosa, Tamps.',
+                description: 'Hotel tradicional en el corazón de la ciudad',
+                amenities: ['WiFi gratis', 'Restaurante', 'Recepción 24h'],
+                rating: 3.8
+            },
+            {
+                id: 'marriott',
+                name: 'Marriott Reynosa',
+                position: [26.0850, -98.2850],
+                price: 1500,
+                image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Blvd. Miguel Alemán 3000, Reynosa, Tamps.',
+                description: 'Hotel de cinco estrellas con servicios premium',
+                amenities: ['Spa completo', 'Piscina infinity', 'Restaurante gourmet', 'Concierge'],
+                rating: 4.6
+            },
+            {
+                id: 'hampton-inn',
+                name: 'Hampton Inn Reynosa',
+                position: [26.0720, -98.2980],
+                price: 1050,
+                image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Av. División del Norte 1850, Reynosa, Tamps.',
+                description: 'Hotel confortable con desayuno hot y piscina',
+                amenities: ['Desayuno hot gratis', 'Piscina', 'Gimnasio', 'WiFi gratis'],
+                rating: 4.0
+            },
+            {
+                id: 'ibis',
+                name: 'Hotel Ibis Reynosa',
+                position: [26.0680, -98.3020],
+                price: 800,
+                image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Blvd. Morelos 1500, Reynosa, Tamps.',
+                description: 'Hotel moderno y funcional con gran relación calidad-precio',
+                amenities: ['WiFi gratis', 'Bar', 'Restaurante', 'Business center'],
+                rating: 3.9
+            },
+            {
+                id: 'colonial',
+                name: 'Hotel Colonial',
+                position: [26.0620, -98.3080],
+                price: 650,
+                image: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Calle Hidalgo 715, Centro, Reynosa, Tamps.',
+                description: 'Hotel histórico con encanto colonial y precios accesibles',
+                amenities: ['WiFi gratis', 'Restaurante tradicional', 'Patio colonial'],
+                rating: 3.5
+            },
+            {
+                id: 'plaza-real',
+                name: 'Plaza Real Hotel',
+                position: [26.0770, -98.2920],
+                price: 900,
+                image: 'https://images.unsplash.com/photo-1561501900-3701fa6a0864?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Av. Benito Juárez 1020, Reynosa, Tamps.',
+                description: 'Hotel ejecutivo con salones para eventos',
+                amenities: ['Salones de eventos', 'Restaurante', 'WiFi gratis', 'Valet parking'],
+                rating: 4.4
+            },
+            {
+                id: 'hotel-astromundo',
+                name: 'Hotel Astromundo',
+                position: [26.0590, -98.2870],
+                price: 750,
+                image: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Av. Álvaro Obregón 950, Reynosa, Tamps.',
+                description: 'Hotel familiar con habitaciones amplias',
+                amenities: ['Piscina familiar', 'Restaurante', 'WiFi gratis', 'Playground'],
+                rating: 3.9
+            },
+            {
+                id: 'hotel-virrey',
+                name: 'Hotel Virrey',
+                position: [26.0640, -98.2940],
+                price: 680,
+                image: 'https://images.unsplash.com/photo-1568084680786-a84f91d1153c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Calle Zaragoza 845, Centro, Reynosa, Tamps.',
+                description: 'Hotel céntrico con atención personalizada',
+                amenities: ['Recepción 24h', 'WiFi gratis', 'Room service', 'Lavandería'],
+                rating: 3.8
+            },
+            {
+                id: 'hotel-maria-dolores',
+                name: 'Hotel María Dolores',
+                position: [26.0710, -98.3150],
+                price: 600,
+                image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Calle Guerrero 620, Reynosa, Tamps.',
+                description: 'Hotel económico y limpio, ideal para estancias cortas',
+                amenities: ['WiFi gratis', 'Aire acondicionado', 'TV cable', 'Estacionamiento'],
+                rating: 3.6
+            },
+            {
+                id: 'hotel-posada-real',
+                name: 'Hotel Posada Real',
+                position: [26.0830, -98.3080],
+                price: 720,
+                image: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Blvd. Morelos 2200, Reynosa, Tamps.',
+                description: 'Hotel con arquitectura mexicana tradicional',
+                amenities: ['Patio mexicano', 'Restaurante típico', 'WiFi gratis', 'Bar tradicional'],
+                rating: 3.7
+            },
+            {
+                id: 'hotel-mansion',
+                name: 'Hotel Mansion Reynosa',
+                position: [26.0690, -98.2860],
+                price: 980,
+                image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Av. Constitución 1550, Reynosa, Tamps.',
+                description: 'Hotel boutique con habitaciones de lujo',
+                amenities: ['Habitaciones de lujo', 'Spa', 'Restaurante fino', 'WiFi gratis', 'Concierge'],
+                rating: 4.4
+            }
+        ];
+
+        let selectedHotel = null;
+
+        // Funciones del modal de autenticación
+        function showAuthModal() {
+            document.getElementById('authModal').classList.add('active');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+            document.getElementById('registerSuccess').classList.remove('show');
+            document.getElementById('registerError').classList.remove('show');
+            document.getElementById('loginError').classList.remove('show');
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+
+        // Funciones del modal de reservación
+        function showReservationModal(hotelId) {
+            const hotel = hotels.find(h => h.id === hotelId);
+            if (!hotel) return;
+
+            selectedHotel = hotel;
+            
+            // Llenar información del hotel
+            document.getElementById('reservationHotelImage').src = hotel.image;
+            document.getElementById('reservationHotelName').textContent = hotel.name;
+            document.getElementById('reservationHotelLocation').textContent = hotel.location;
+            document.getElementById('reservationHotelPrice').textContent = `${hotel.price} por noche`;
+            
+            // Prellenar fechas si están disponibles
+            const checkin = document.getElementById('checkin').value;
+            const checkout = document.getElementById('checkout').value;
+            
+            if (checkin) document.getElementById('resCheckin').value = checkin;
+            if (checkout) document.getElementById('resCheckout').value = checkout;
+            
+            // Prellenar datos del usuario si está logueado
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                document.getElementById('resName').value = currentUser.name || '';
+                document.getElementById('resEmail').value = currentUser.email || '';
+                document.getElementById('resPhone').value = currentUser.phone || '';
+            }
+            
+            // Mostrar modal
+            document.getElementById('reservationModal').classList.add('active');
+            updateReservationSummary();
+        }
+
+        function closeReservationModal() {
+            document.getElementById('reservationModal').classList.remove('active');
+        }
+
+        function updateReservationSummary() {
+            if (!selectedHotel) return;
+            
+            const checkin = new Date(document.getElementById('resCheckin').value);
+            const checkout = new Date(document.getElementById('resCheckout').value);
+            
+            if (checkin && checkout && checkout > checkin) {
+                const nights = Math.ceil((checkout - checkin) / (1000 * 60 * 60 * 24));
+                const subtotal = selectedHotel.price * nights;
+                const taxes = subtotal * 0.16;
+                const total = subtotal + taxes;
+                
+                document.getElementById('nightlyRate').textContent = `${selectedHotel.price}`;
+                document.getElementById('numberOfNights').textContent = nights;
+                document.getElementById('subtotal').textContent = `${subtotal.toLocaleString()}`;
+                document.getElementById('taxes').textContent = `${taxes.toLocaleString()}`;
+                document.getElementById('totalAmount').textContent = `${total.toLocaleString()}`;
+            }
+        }
+
+        // Función para verificar si el usuario ya está registrado
+        function isUserRegistered(email) {
+            return registeredUsers.some(user => user.email.toLowerCase() === email.toLowerCase());
+        }
+
+        // Función para verificar credenciales de login
+        function validateLogin(email, password) {
+            return registeredUsers.find(user => 
+                user.email.toLowerCase() === email.toLowerCase() && user.password === password
+            );
+        }
+
+        // Función de registro
+        function handleRegister(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            
+            const errorDiv = document.getElementById('registerError');
+            const successDiv = document.getElementById('registerSuccess');
+            
+            // Limpiar mensajes anteriores
+            errorDiv.classList.remove('show');
+            successDiv.classList.remove('show');
+            
+            // Validaciones
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Las contraseñas no coinciden';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            if (password.length < 6) {
+                errorDiv.textContent = 'La contraseña debe tener al menos 6 caracteres';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            if (isUserRegistered(email)) {
+                errorDiv.textContent = 'Ya existe una cuenta con este correo electrónico';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // Registrar usuario
+            const newUser = {
+                name: name,
+                email: email,
+                phone: phone,
+                password: password,
+                country: 'MX',
+                registrationDate: new Date().toISOString()
+            };
+            
+            registeredUsers.push(newUser);
+            localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+            
+            // Mostrar mensaje de éxito
+            successDiv.classList.add('show');
+            
+            // Limpiar formulario
+            document.getElementById('registerFormElement').reset();
+            
+            // Cambiar a formulario de login después de 2 segundos
+            setTimeout(() => {
+                showLogin();
+                successDiv.classList.remove('show');
+            }, 2000);
+        }
+
+        // Función de login
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.classList.remove('show');
+            
+            const user = validateLogin(email, password);
+            
+            if (!user) {
+                errorDiv.textContent = 'Credenciales incorrectas. Verifica tu email y contraseña.';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // Login exitoso
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            
+            closeAuthModal();
+            
+            // Mostrar mensaje de bienvenida y actualizar UI
+            alert(`¡Bienvenido de nuevo, ${user.name}!`);
+            updateUserUI();
+        }
+
+        // Función para manejar reservaciones
+        function handleReservation(event) {
+            event.preventDefault();
+            
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            if (!isLoggedIn) {
+                alert('Debes iniciar sesión para hacer una reservación');
+                closeReservationModal();
+                showAuthModal();
+                showLogin();
+                return;
+            }
+            
+            const reservationData = {
+                id: Date.now(),
+                userEmail: JSON.parse(localStorage.getItem('currentUser')).email,
+                hotel: {
+                    name: selectedHotel.name,
+                    image: selectedHotel.image,
+                    location: selectedHotel.location
+                },
+                checkin: document.getElementById('resCheckin').value,
+                checkout: document.getElementById('resCheckout').value,
+                guests: document.getElementById('resGuests').value + ' huéspedes',
+                roomType: document.getElementById('resRoomType').options[document.getElementById('resRoomType').selectedIndex].text,
+                total: parseInt(document.getElementById('totalAmount').textContent.replace(/[$,]/g, '')),
+                status: 'confirmada',
+                guestName: document.getElementById('resName').value,
+                guestPhone: document.getElementById('resPhone').value,
+                specialRequests: document.getElementById('resRequests').value
+            };
+            
+            // Guardar reservación
+            let userReservations = JSON.parse(localStorage.getItem('userReservations')) || [];
+            userReservations.push(reservationData);
+            localStorage.setItem('userReservations', JSON.stringify(userReservations));
+            
+            closeReservationModal();
+            alert('¡Reservación confirmada! Puedes ver los detalles en tu cuenta.');
+        }
+
+        // Función para cerrar sesión
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('currentUser');
+            alert('Sesión cerrada correctamente');
+            updateUserUI();
+        }
+
+        // Función para manejar el clic en "Mi cuenta"
+        function handleAccountClick(e) {
+            e.preventDefault();
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            if (isLoggedIn) {
+                window.location.href = 'account.html';
+            } else {
+                showAuthModal();
+                showLogin();
+            }
+        }
+
+        // Función para actualizar las acciones de usuario
+        function updateUserUI() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            const userActions = document.getElementById('userActions');
+            
+            if (isLoggedIn && currentUser) {
+                userActions.innerHTML = `
+                    <span>Hola, ${currentUser.name}</span>
+                    <a href="account.html">Mi cuenta</a>
+                    <a href="#" id="logoutLink">Cerrar sesión</a>
+                `;
+                
+                document.getElementById('logoutLink').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logout();
+                });
+            } else {
+                userActions.innerHTML = `
+                    <a href="#" id="loginLink">Iniciar sesión</a>
+                    <a href="#" id="registerLink" class="btn-register">Registrarse</a>
+                `;
+                
+                document.getElementById('loginLink').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showAuthModal();
+                    showLogin();
+                });
+                document.getElementById('registerLink').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showAuthModal();
+                    showRegister();
+                });
+            }
+        }
+
+// Función para manejar la selección de hotel
+        function handleHotelSelection() {
+            const selectedValue = document.getElementById('destination').value;
+            const hotelInfo = document.getElementById('hotelInfo');
+            
+            if (selectedValue) {
+                const hotel = hotels.find(h => h.id === selectedValue);
+                if (hotel) {
+                    hotelInfo.innerHTML = `
+                        <h4>${hotel.name}</h4>
+                        <p><i class="fas fa-map-marker-alt"></i> ${hotel.location}</p>
+                        <p>${hotel.description}</p>
+                        <p class="price">$${hotel.price} por noche</p>
+                        <div style="margin-top: 10px;">
+                            <button onclick="showReservationModal('${hotel.id}')" class="btn" style="padding: 8px 15px; font-size: 14px;">
+                                Reservar ahora
+                            </button>
+                        </div>
+                    `;
+                    hotelInfo.style.display = 'block';
+                }
+            } else {
+                hotelInfo.style.display = 'none';
+            }
+        }
+
+        // Renderizar hoteles
+        function renderHotels(hotelsToRender) {
+            const hotelCards = document.getElementById('hotelCards');
+            hotelCards.innerHTML = '';
+            
+            hotelsToRender.forEach(hotel => {
+                const amenitiesHTML = hotel.amenities.map(amenity => 
+                    `<span class="amenity-tag">${amenity}</span>`
+                ).join('');
+                
+                const starsHTML = '⭐'.repeat(Math.floor(hotel.rating));
+                
+                const card = document.createElement('div');
+                card.className = 'hotel-card';
+                card.innerHTML = `
+                    <img src="${hotel.image}" alt="${hotel.name}" class="hotel-img">
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">${hotel.name}</h3>
+                        <div class="hotel-location">
+                            <i class="fas fa-map-marker-alt"></i> ${hotel.location}
+                        </div>
+                        <div class="hotel-amenities">
+                            ${amenitiesHTML}
+                        </div>
+                        <div class="hotel-rating">
+                            ${starsHTML} ${hotel.rating}
+                        </div>
+                        <div class="hotel-price">$${hotel.price} <span>por noche</span></div>
+                        <button onclick="showReservationModal('${hotel.id}')" class="btn">Reservar ahora</button>
+                    </div>
+                `;
+                
+                hotelCards.appendChild(card);
+            });
+            
+            document.getElementById('resultsCount').textContent = hotelsToRender.length;
+        }
+
+        // Filtrar hoteles
+        function filterHotels() {
+            const priceFilter = document.getElementById('priceFilter').value;
+            const ratingFilter = document.getElementById('ratingFilter').value;
+            const amenitiesFilter = document.getElementById('amenitiesFilter').value;
+            
+            let filteredHotels = [...hotels];
+            
+            // Filtrar por precio
+            if (priceFilter) {
+                if (priceFilter === '0-500') {
+                    filteredHotels = filteredHotels.filter(hotel => hotel.price <= 500);
+                } else if (priceFilter === '500-1000') {
+                    filteredHotels = filteredHotels.filter(hotel => hotel.price > 500 && hotel.price <= 1000);
+                } else if (priceFilter === '1000-1500') {
+                    filteredHotels = filteredHotels.filter(hotel => hotel.price > 1000 && hotel.price <= 1500);
+                } else if (priceFilter === '1500+') {
+                    filteredHotels = filteredHotels.filter(hotel => hotel.price > 1500);
+                }
+            }
+            
+            // Filtrar por calificación
+            if (ratingFilter) {
+                filteredHotels = filteredHotels.filter(hotel => hotel.rating >= parseFloat(ratingFilter));
+            }
+            
+            // Filtrar por amenities
+            if (amenitiesFilter) {
+                if (amenitiesFilter === 'wifi') {
+                    filteredHotels = filteredHotels.filter(hotel => 
+                        hotel.amenities.some(amenity => amenity.toLowerCase().includes('wifi'))
+                    );
+                } else if (amenitiesFilter === 'pool') {
+                    filteredHotels = filteredHotels.filter(hotel => 
+                        hotel.amenities.some(amenity => amenity.toLowerCase().includes('piscina'))
+                    );
+                } else if (amenitiesFilter === 'breakfast') {
+                    filteredHotels = filteredHotels.filter(hotel => 
+                        hotel.amenities.some(amenity => amenity.toLowerCase().includes('desayuno'))
+                    );
+                } else if (amenitiesFilter === 'parking') {
+                    filteredHotels = filteredHotels.filter(hotel => 
+                        hotel.amenities.some(amenity => amenity.toLowerCase().includes('estacionamiento'))
+                    );
+                }
+            }
+            
+            // Ordenar
+            const sortBy = document.getElementById('sortBy').value;
+            if (sortBy === 'priceLow') {
+                filteredHotels.sort((a, b) => a.price - b.price);
+            } else if (sortBy === 'priceHigh') {
+                filteredHotels.sort((a, b) => b.price - a.price);
+            } else if (sortBy === 'rating') {
+                filteredHotels.sort((a, b) => b.rating - a.rating);
+            }
+            
+            renderHotels(filteredHotels);
+        }
+
+        // Inicializar mapa
+        function initMap() {
+            const reynosa = [26.0712, -98.2974];
+            const map = L.map('hotel-map').setView(reynosa, 13);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Add all hotel markers
+            hotels.forEach(hotel => {
+                const marker = L.marker(hotel.position).addTo(map);
+                marker.bindPopup(`
+                    <div style="min-width: 200px;">
+                        <strong>${hotel.name}</strong><br>
+                        <small>${hotel.location}</small><br>
+                        <p style="margin: 8px 0; font-size: 12px;">${hotel.description}</p>
+                        <div style="margin: 8px 0;">
+                            <strong style="color: #0071ce;">$${hotel.price} por noche</strong>
+                        </div>
+                        <button onclick="showReservationModal('${hotel.id}')" 
+                                style="background: #ff5a60; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            Reservar
+                        </button>
+                    </div>
+                `);
+            });
+        }
+
+        // Toggle mobile menu
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+
+        // Set minimum dates for checkin/checkout
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('checkin').setAttribute('min', today);
+        document.getElementById('resCheckin').setAttribute('min', today);
+        
+        document.getElementById('checkin').addEventListener('change', function() {
+            document.getElementById('checkout').setAttribute('min', this.value);
+        });
+
+        document.getElementById('resCheckin').addEventListener('change', function() {
+            document.getElementById('resCheckout').setAttribute('min', this.value);
+            updateReservationSummary();
+        });
+
+        document.getElementById('resCheckout').addEventListener('change', function() {
+            updateReservationSummary();
+        });
+
+        // Search hotels functionality
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const destination = document.getElementById('destination').value;
+            const checkin = document.getElementById('checkin').value;
+            const checkout = document.getElementById('checkout').value;
+            
+            if (!destination) {
+                alert('Por favor, selecciona un hotel.');
+                return;
+            }
+            
+            if (!checkin || !checkout) {
+                alert('Por favor, selecciona las fechas de tu estancia.');
+                return;
+            }
+            
+            // Mostrar modal de reservación directamente
+            showReservationModal(destination);
+        });
+
+        // Inicializar cuando la página cargue
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar formularios de autenticación
+            document.getElementById('registerFormElement').addEventListener('submit', handleRegister);
+            document.getElementById('loginFormElement').addEventListener('submit', handleLogin);
+            document.getElementById('reservationForm').addEventListener('submit', handleReservation);
+            
+            // Configurar enlace "Mi cuenta"
+            document.getElementById('accountLink').addEventListener('click', handleAccountClick);
+            
+            // Configurar selección de hotel
+            document.getElementById('destination').addEventListener('change', handleHotelSelection);
+            
+            // Event listeners para filtros
+            document.getElementById('priceFilter').addEventListener('change', filterHotels);
+            document.getElementById('ratingFilter').addEventListener('change', filterHotels);
+            document.getElementById('amenitiesFilter').addEventListener('change', filterHotels);
+            document.getElementById('sortBy').addEventListener('change', filterHotels);
+            
+            // Cerrar modales al hacer clic fuera
+            document.getElementById('authModal').addEventListener('click', function(e) {
+                if (e.target === this) closeAuthModal();
+            });
+            
+            document.getElementById('reservationModal').addEventListener('click', function(e) {
+                if (e.target === this) closeReservationModal();
+            });
+            
+            // Actualizar UI, renderizar hoteles y mapa
+            updateUserUI();
+            renderHotels(hotels);
+            initMap();
+        });
+    </script>
+</body>
+</html>

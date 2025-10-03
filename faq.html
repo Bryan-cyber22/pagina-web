@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preguntas Frecuentes - VBDHOTEL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0071ce;
+            --secondary-color: #ff5a60;
+            --accent-color: #3cd070;
+            --dark-color: #1a1a1a;
+            --light-color: #f8f9fa;
+            --gray-color: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo span {
+            color: var(--secondary-color);
+        }
+        
+        .user-actions a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: var(--gray-color);
+            font-weight: 500;
+        }
+        
+        .user-actions a:hover {
+            color: var(--primary-color);
+        }
+        
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 20px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1431540015161-0bf868a2d407?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Search FAQ */
+        .search-faq {
+            background-color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-box {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-right: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+        }
+        
+        .search-btn {
+            padding: 0 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        
+        /* FAQ Categories */
+        .faq-categories {
+            padding: 40px 0;
+        }
+        
+        .categories-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .category-btn {
+            padding: 10px 20px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .category-btn:hover,
+        .category-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* FAQ Section */
+        .faq-section {
+            padding: 40px 0 60px;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2rem;
+            color: var(--dark-color);
+        }
+        
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .faq-question {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+        
+        .faq-question i {
+            transition: transform 0.3s;
+        }
+        
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s, padding 0.3s;
+            color: var(--gray-color);
+        }
+        
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 20px 20px;
+        }
+        
+        /* Contact Prompt */
+        .contact-prompt {
+            padding: 60px 0;
+            text-align: center;
+            background-color: var(--light-color);
+        }
+        
+        .contact-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .contact-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            background-color: #005fa3;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 60px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: white;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                margin: 10px 0;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                border-right: 2px solid #ddd;
+                border-radius: 4px;
+                margin-bottom: 10px;
+            }
+            
+            .search-btn {
+                border-radius: 4px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-top">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-hotel"></i>
+                    VBD<span>HOTEL</span>
+                </a>
+                <div class="user-actions" id="userActions">
+                    <a href="#" id="loginLink">Iniciar sesión</a>
+                    <a href="#" id="registerLink">Registrarse</a>
+                </div>
+            </div>
+            <div class="header-nav">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="hotels.html">Hoteles</a></li>
+                    <li><a href="destinations.html">Destinos</a></li>
+                    
+                    <li><a href="experiences.html">Experiencias</a></li>
+                    <li><a href="account.html">Mi cuenta</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Preguntas Frecuentes</h1>
+            <p>Encuentra respuestas a las preguntas más comunes sobre reservas, pagos, cancelaciones y más.</p>
+        </div>
+    </section>
+
+    <!-- Search FAQ -->
+    <section class="search-faq">
+        <div class="container">
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Buscar en preguntas frecuentes...">
+                    <button class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Categories -->
+    <section class="faq-categories">
+        <div class="container">
+            <div class="categories-list">
+                <button class="category-btn active" data-category="all">Todas</button>
+                <button class="category-btn" data-category="reservations">Reservaciones</button>
+                <button class="category-btn" data-category="payments">Pagos</button>
+                <button class="category-btn" data-category="cancellations">Cancelaciones</button>
+                <button class="category-btn" data-category="account">Mi Cuenta</button>
+                <button class="category-btn" data-category="hotels">Hoteles</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2 class="section-title">Preguntas Frecuentes</h2>
+            
+            <div class="faq-list">
+                <!-- Reservations -->
+                <div class="faq-item" data-category="reservations">
+                    <div class="faq-question">
+                        <span>¿Cómo puedo hacer una reservación?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Para hacer una reservación, sigue estos pasos:</p>
+                        <ol>
+                            <li>Selecciona tu destino y fechas en la página principal</li>
+                            <li>Elige el hotel que prefieras de los resultados</li>
+                            <li>Selecciona el tipo de habitación y número de huéspedes</li>
+                            <li>Completa tus datos personales y de pago</li>
+                            <li>Confirma tu reservación y recibe tu confirmación por email</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="reservations">
+                    <div class="faq-question">
+                        <span>¿Necesito crear una cuenta para reservar?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sí, es necesario crear una cuenta para realizar reservaciones. Esto te permite:</p>
+                        <ul>
+                            <li>Gestionar tus reservaciones fácilmente</li>
+                            <li>Recibir confirmaciones y actualizaciones</li>
+                            <li>Acceder a historial de reservas anteriores</li>
+                            <li>Guardar tus datos para futuras reservas</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="reservations">
+                    <div class="faq-question">
+                        <span>¿Puedo modificar mi reservación después de hacerla?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sí, puedes modificar tu reservación accediendo a "Mis reservaciones" en tu cuenta. Las modificaciones están sujetas a:</p>
+                        <ul>
+                            <li>Disponibilidad del hotel para las nuevas fechas</li>
+                            <li>Políticas de modificación del hotel</li>
+                            <li>Posibles diferencias de tarifa</li>
+                        </ul>
+                        <p>Para modificaciones complejas, te recomendamos contactarnos directamente.</p>
+                    </div>
+                </div>
+                
+                <!-- Payments -->
+                <div class="faq-item" data-category="payments">
+                    <div class="faq-question">
+                        <span>¿Qué métodos de pago aceptan?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Aceptamos los siguientes métodos de pago:</p>
+                        <ul>
+                            <li>Tarjetas de crédito (Visa, MasterCard, American Express)</li>
+                            <li>Tarjetas de débito</li>
+                            <li>PayPal</li>
+                            <li>Transferencia bancaria</li>
+                        </ul>
+                        <p>Todos los pagos se procesan de forma segura a través de nuestro sistema encriptado.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="payments">
+                    <div class="faq-question">
+                        <span>¿Es seguro pagar en VBDHOTEL?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sí, la seguridad de tus datos es nuestra prioridad. Utilizamos:</p>
+                        <ul>
+                            <li>Encriptación SSL de 256 bits para todas las transacciones</li>
+                            <li>Certificados de seguridad actualizados</li>
+                            <li>Procesadores de pago certificados PCI DSS</li>
+                            <li>Protección contra fraudes</li>
+                        </ul>
+                        <p>Nunca almacenamos información completa de tus tarjetas de crédito.</p>
+                    </div>
+                </div>
+                
+                <!-- Cancellations -->
+                <div class="faq-item" data-category="cancellations">
+                    <div class="faq-question">
+                        <span>¿Cuál es la política de cancelación?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Nuestra política de cancelación varía según el hotel y el tipo de tarifa:</p>
+                        <ul>
+                            <li><strong>Tarifa Flexible:</strong> Cancelación gratuita hasta 24-48 horas antes del check-in</li>
+                            <li><strong>Tarifa No Reembolsable:</strong> No permite cancelaciones ni reembolsos</li>
+                            <li><strong>Ofertas Especiales:</strong> Sujetas a políticas específicas indicadas en la reserva</li>
+                        </ul>
+                        <p>Puedes verificar la política específica de tu reserva en el email de confirmación.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="cancellations">
+                    <div class="faq-question">
+                        <span>¿Cómo puedo cancelar mi reservación?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Puedes cancelar tu reservación de dos formas:</p>
+                        <ol>
+                            <li><strong>En línea:</strong> Accede a "Mis reservaciones" en tu cuenta, selecciona la reserva y sigue el proceso de cancelación.</li>
+                            <li><strong>Por teléfono:</strong> Contacta a nuestro centro de atención al cliente.</li>
+                        </ol>
+                        <p>Recibirás un email de confirmación una vez procesada la cancelación.</p>
+                    </div>
+                </div>
+                
+                <!-- Account -->
+                <div class="faq-item" data-category="account">
+                    <div class="faq-question">
+                        <span>¿Cómo recupero mi contraseña?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Para recuperar tu contraseña:</p>
+                        <ol>
+                            <li>Haz clic en "Iniciar sesión"</li>
+                            <li>Selecciona "¿Olvidaste tu contraseña?"</li>
+                            <li>Ingresa tu dirección de email</li>
+                            <li>Recibirás un email con instrucciones para restablecer tu contraseña</li>
+                            <li>Sigue el enlace y crea una nueva contraseña</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="account">
+                    <div class="faq-question">
+                        <span>¿Cómo actualizo mis datos personales?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Para actualizar tus datos personales:</p>
+                        <ol>
+                            <li>Inicia sesión en tu cuenta</li>
+                            <li>Ve a "Mi perfil" o "Configuración de cuenta"</li>
+                            <li>Edita la información que deseas cambiar</li>
+                            <li>Guarda los cambios</li>
+                        </ol>
+                        <p>Te recomendamos mantener tu información actualizada para recibir correctamente las confirmaciones de tus reservas.</p>
+                    </div>
+                </div>
+                
+                <!-- Hotels -->
+                <div class="faq-item" data-category="hotels">
+                    <div class="faq-question">
+                        <span>¿Qué incluye el precio de la habitación?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>El precio de la habitación generalmente incluye:</p>
+                        <ul>
+                            <li>Alojamiento para el número de personas especificado</li>
+                            <li>Impuestos aplicables</li>
+                            <li>Servicios básicos del hotel</li>
+                        </ul>
+                        <p>Puede no incluir:</p>
+                        <ul>
+                            <li>Alimentos y bebidas (a menos que se especifique)</li>
+                            <li>Servicios adicionales (spa, lavandería, etc.)</li>
+                            <li>Impuestos locales o turísticos que se paguen directamente en el hotel</li>
+                        </ul>
+                        <p>Todos los detalles se especifican claramente en la página de cada hotel.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="hotels">
+                    <div class="faq-question">
+                        <span>¿Cómo sé si un hotel es adecuado para familias?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Puedes identificar hoteles familiares mediante:</p>
+                        <ul>
+                            <li>Filtro "Adecuado para familias" en la búsqueda</li>
+                            <li>Servicios listados como "Cunas disponibles", "Área de juegos infantil"</li>
+                            <li>Habitaciones familiares o suites</li>
+                            <li>Reseñas de otros viajeros con niños</li>
+                        </ul>
+                        <p>También puedes contactarnos para recomendaciones específicas según las edades de tus hijos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Prompt -->
+    <section class="contact-prompt">
+        <div class="container">
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h2>¿No encontraste lo que buscabas?</h2>
+                <p>Nuestro equipo de atención al cliente está disponible para ayudarte con cualquier pregunta adicional que tengas.</p>
+                <div>
+                    <a href="contact.html" class="btn">Contactar soporte</a>
+                    <a href="help.html" class="btn btn-outline">Volver al centro de ayuda</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>VBDHOTEL</h3>
+                    <p>Encuentra los mejores hoteles al mejor precio. Compara entre miles de opciones y ahorra hasta un 50%.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Destinos populares</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Reynosa</a></li>
+                        <li><a href="#">Matamoros</a></li>
+                        <li><a href="#">Nuevo Laredo</a></li>
+                        <li><a href="#">Ciudad Victoria</a></li>
+                        <li><a href="#">Tampico</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Enlaces útiles</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html">Sobre nosotros</a></li>
+                        <li><a href="contact.html">Contacto</a></li>
+                        <li><a href="help.html">Ayuda</a></li>
+                        <li><a href="faq.html">Preguntas frecuentes</a></li>
+                        <li><a href="sitemap.html">Mapa del sitio</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="terms.html">Términos y condiciones</a></li>
+                        <li><a href="privacy.html">Política de privacidad</a></li>
+                        <li><a href="cookies.html">Política de cookies</a></li>
+                        <li><a href="legal.html">Aviso legal</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 VBDHOTEL. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle mobile menu
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+        
+        // FAQ accordion functionality
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            
+            question.addEventListener('click', () => {
+                // Close all other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current item
+                item.classList.toggle('active');
+            });
+        });
+        
+        // Filter FAQ by category
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const category = this.dataset.category;
+                
+                // Show/hide FAQ items based on category
+                faqItems.forEach(item => {
+                    if (category === 'all' || item.dataset.category === category) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                        item.classList.remove('active');
+                    }
+                });
+            });
+        });
+        
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        const searchBtn = document.querySelector('.search-btn');
+        
+        function searchFAQ() {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                
+                if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                    item.classList.remove('active');
+                }
+            });
+        }
+        
+        searchBtn.addEventListener('click', searchFAQ);
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                searchFAQ();
+            }
+        });
+        
+        // Check if user is logged in
+        function updateUserUI() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userEmail = localStorage.getItem('userEmail');
+            const userName = localStorage.getItem('userName');
+            
+            const userActions = document.getElementById('userActions');
+            
+            if (isLoggedIn) {
+                userActions.innerHTML = `
+                    <span>Hola, ${userName || userEmail}</span>
+                    <a href="account.html">Mi cuenta</a>
+                    <a href="#" id="logoutLink">Cerrar sesión</a>
+                `;
+                
+                document.getElementById('logoutLink').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('userEmail');
+                    localStorage.removeItem('userName');
+                    localStorage.removeItem('userPhone');
+                    alert('Sesión cerrada');
+                    location.reload();
+                });
+            }
+        }
+        
+        // Initialize UI based on login status
+        updateUserUI();
+    </script>
+</body>
+</html>

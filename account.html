@@ -1,0 +1,2224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cuenta - VBDHOTEL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0071ce;
+            --secondary-color: #ff5a60;
+            --accent-color: #3cd070;
+            --dark-color: #1a1a1a;
+            --light-color: #f8f9fa;
+            --gray-color: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .auth-modal {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .modal-header p {
+            color: var(--gray-color);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-group input, .form-group select {
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .auth-btn, .btn, .save-btn, .action-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .auth-btn:hover, .btn:hover, .save-btn:hover, .action-btn:hover {
+            background-color: #005fa3;
+        }
+
+        .auth-btn:disabled, .btn:disabled, .save-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .modal-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray-color);
+        }
+
+        .modal-switch a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .modal-switch a:hover {
+            text-decoration: underline;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray-color);
+        }
+
+        .close-modal:hover {
+            color: var(--dark-color);
+        }
+
+        /* Success Message */
+        .success-message {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+        
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo span {
+            color: var(--secondary-color);
+        }
+        
+        .user-actions a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: var(--gray-color);
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .user-actions a:hover {
+            color: var(--primary-color);
+        }
+        
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 20px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+
+        /* Account Section */
+        .account-section {
+            padding: 40px 0;
+        }
+        
+        .account-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .account-title {
+            font-size: 2rem;
+        }
+        
+        .account-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+        
+        .account-sidebar {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+        
+        .user-info h3 {
+            margin-bottom: 5px;
+        }
+        
+        .user-info p {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            padding: 10px;
+            color: var(--dark-color);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background-color: var(--light-color);
+            color: var(--primary-color);
+        }
+        
+        .sidebar-menu i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .account-main {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .reservations-list {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .reservation-item {
+            display: grid;
+            grid-template-columns: 200px 1fr auto;
+            gap: 15px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+
+        /* Estilos específicos para experiencias */
+        .experience-item {
+            display: grid;
+            grid-template-columns: 200px 1fr auto;
+            gap: 15px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 8px;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+        }
+
+        .experience-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .experience-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .experience-details h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .experience-details h3:hover {
+            color: var(--secondary-color);
+            transition: color 0.3s ease;
+        }
+
+        .experience-info {
+            color: var(--gray-color);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .experience-info i {
+            width: 16px;
+            margin-right: 8px;
+            color: var(--secondary-color);
+        }
+
+        .experience-duration {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .experience-price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 5px;
+        }
+        
+        .reservation-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .reservation-details h3 {
+            margin-bottom: 10px;
+        }
+        
+        .reservation-info {
+            color: var(--gray-color);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .reservation-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-confirmed {
+            background-color: #e6f7ee;
+            color: #3cd070;
+        }
+        
+        .status-pending {
+            background-color: #fff8e6;
+            color: #ffc107;
+        }
+        
+        .status-cancelled {
+            background-color: #fee;
+            color: #ff5252;
+        }
+        
+        .reservation-actions {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-view {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-view:hover {
+            background-color: #005fa3;
+        }
+        
+        .btn-cancel {
+            background-color: #ff5a60;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-cancel:hover {
+            background-color: #e04a50;
+        }
+        
+        .profile-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-full {
+            grid-column: span 2;
+        }
+        
+        .hotel-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .hotel-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .hotel-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .hotel-info {
+            padding: 15px;
+        }
+        
+        .hotel-name {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        
+        .hotel-location {
+            color: var(--gray-color);
+            margin-bottom: 8px;
+        }
+        
+        .hotel-rating {
+            margin-bottom: 8px;
+        }
+        
+        .hotel-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .hotel-price span {
+            font-size: 0.9rem;
+            font-weight: normal;
+            color: var(--gray-color);
+        }
+        
+        .no-reservations {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-color);
+        }
+        
+        .no-reservations i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 60px 0 20px;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 968px) {
+            .account-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .reservation-item, .experience-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .profile-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-full {
+                grid-column: 1;
+            }
+            
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: white;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                margin: 10px 0;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+
+            .auth-modal {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .hotel-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animaciones adicionales */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .account-tab {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .reservation-item:hover,
+        .experience-item:hover,
+        .hotel-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .sidebar-menu a {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .sidebar-menu a:hover::before {
+            left: 100%;
+        }
+        
+        .modal-overlay.active .auth-modal {
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 113, 206, 0.15);
+        }
+        
+        .btn:hover,
+        .save-btn:hover,
+        .auth-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 113, 206, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal de Autenticación -->
+    <div class="modal-overlay" id="authModal">
+        <div class="auth-modal">
+            <button class="close-modal" onclick="closeAuthModal()">&times;</button>
+            
+            <!-- Registro -->
+            <div id="registerForm" class="auth-content">
+                <div class="modal-header">
+                    <h2>Crear cuenta</h2>
+                    <p>Únete a VBDHOTEL y disfruta de beneficios exclusivos</p>
+                </div>
+                
+                <div class="success-message" id="registerSuccess">
+                    <i class="fas fa-check-circle"></i>
+                    ¡Registro exitoso! Ahora puedes iniciar sesión con tus credenciales.
+                </div>
+                
+                <div class="error-message" id="registerError"></div>
+                
+                <form class="auth-form" id="registerFormElement">
+                    <div class="form-group">
+                        <label for="regName">Nombre completo</label>
+                        <input type="text" id="regName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regEmail">Correo electrónico</label>
+                        <input type="email" id="regEmail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regPhone">Teléfono</label>
+                        <input type="tel" id="regPhone" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regPassword">Contraseña</label>
+                        <input type="password" id="regPassword" required minlength="6">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regConfirmPassword">Confirmar contraseña</label>
+                        <input type="password" id="regConfirmPassword" required minlength="6">
+                    </div>
+                    
+                    <button type="submit" class="auth-btn">Crear cuenta</button>
+                </form>
+                
+                <div class="modal-switch">
+                    ¿Ya tienes cuenta? <a href="#" onclick="showLogin()">Iniciar sesión</a>
+                </div>
+            </div>
+            
+            <!-- Login -->
+            <div id="loginForm" class="auth-content" style="display: none;">
+                <div class="modal-header">
+                    <h2>Iniciar sesión</h2>
+                    <p>Accede a tu cuenta de VBDHOTEL</p>
+                </div>
+                
+                <div class="error-message" id="loginError"></div>
+                
+                <form class="auth-form" id="loginFormElement">
+                    <div class="form-group">
+                        <label for="loginEmail">Correo electrónico</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">Contraseña</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn">Iniciar sesión</button>
+                </form>
+                
+                <div class="modal-switch">
+                    ¿No tienes cuenta? <a href="#" onclick="showRegister()">Crear cuenta</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-top">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-hotel"></i>
+                    VBD<span>HOTEL</span>
+                </a>
+                <div class="user-actions" id="userActions">
+                    <!-- Se llenará dinámicamente con JavaScript -->
+                </div>
+            </div>
+            <div class="header-nav">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="hotels.html">Hoteles</a></li>
+                    <li><a href="destinations.html">Destinos</a></li>
+                    <li><a href="experiences.html">Experiencias</a></li>
+                    <li><a href="account.html" class="active">Mi cuenta</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Account Section -->
+    <section class="account-section">
+        <div class="container">
+            <div class="account-header">
+                <h1 class="account-title">Mi cuenta</h1>
+            </div>
+            
+            <div class="account-content">
+                <div class="account-sidebar">
+                    <div class="user-profile">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <h3 id="userName">Cargando...</h3>
+                            <p id="userEmail">Cargando...</p>
+                        </div>
+                    </div>
+                    
+                    <ul class="sidebar-menu">
+                        <li><a href="#" class="active" data-tab="profile"><i class="fas fa-user"></i> Mi perfil</a></li>
+                        <li><a href="#" data-tab="reservations"><i class="fas fa-calendar-alt"></i> Mis reservaciones</a></li>
+                        <li><a href="#" data-tab="destinations"><i class="fas fa-map-marked-alt"></i> Mis Destinos</a></li>
+                        <li><a href="#" data-tab="experiences"><i class="fas fa-star"></i> Mis Experiencias</a></li>
+                        <li><a href="#" data-tab="favorites"><i class="fas fa-heart"></i> Favoritos</a></li>
+                        <li><a href="#" data-tab="history"><i class="fas fa-history"></i> Historial</a></li>
+                        <li><a href="#" data-tab="settings"><i class="fas fa-cog"></i> Configuración</a></li>
+                        <li><a href="#" id="logoutLink"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
+                    </ul>
+                </div>
+                
+                <div class="account-main">
+                    <!-- Sección de Perfil -->
+                    <div id="profile-section" class="account-tab">
+                        <h2 class="section-title">Mi perfil</h2>
+                        
+                        <form class="profile-form" id="profileForm">
+                            <div class="form-group">
+                                <label for="profileName">Nombre completo</label>
+                                <input type="text" id="profileName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="profileEmail">Correo electrónico</label>
+                                <input type="email" id="profileEmail" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="profilePhone">Teléfono</label>
+                                <input type="tel" id="profilePhone">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="profileCountry">País</label>
+                                <select id="profileCountry">
+                                    <option value="MX">México</option>
+                                    <option value="US">Estados Unidos</option>
+                                    <option value="ES">España</option>
+                                    <option value="CO">Colombia</option>
+                                    <option value="AR">Argentina</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group form-full">
+                                <button type="button" class="save-btn" id="saveProfileBtn">Guardar cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Sección de Reservaciones -->
+                    <div id="reservations-section" class="account-tab" style="display: none;">
+                        <h2 class="section-title">Mis reservaciones</h2>
+                        
+                        <div class="reservations-list" id="reservationsList">
+                            <!-- Las reservaciones se cargarán dinámicamente -->
+                        </div>
+                    </div>
+                    
+                    <!-- Sección de Destinos -->
+                    <div id="destinations-section" class="account-tab" style="display: none;">
+                        <h2 class="section-title">Mis Destinos</h2>
+                        
+                        <div class="reservations-list" id="destinationsList">
+                            <!-- Los destinos se cargarán dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Sección de Experiencias -->
+                    <div id="experiences-section" class="account-tab" style="display: none;">
+                        <h2 class="section-title">Mis Experiencias</h2>
+                        
+                        <div class="reservations-list" id="experiencesList">
+                            <!-- Las experiencias se cargarán dinámicamente -->
+                        </div>
+                    </div>
+                    
+                    <!-- Sección de Favoritos -->
+                    <div id="favorites-section" class="account-tab" style="display: none;">
+                        <h2 class="section-title">Mis hoteles favoritos</h2>
+                        
+                        <div class="hotel-cards" id="favoritesList">
+                            <!-- Los favoritos se cargarán dinámicamente -->
+                        </div>
+                    </div>
+                    
+                    <!-- Sección de Historial -->
+                    <div id="history-section" class="account-tab" style="display: none;">
+                        <h2 class="section-title">Historial de reservaciones</h2>
+                        
+                        <div class="reservations-list" id="historyList">
+                            <!-- El historial se cargará dinámicamente -->
+                        </div>
+                    </div>
+                    
+                    <!-- Sección de Configuración -->
+                    <div id="settings-section" class="account-tab" style="display: none;">
+                        <h2 class="section-title">Configuración de cuenta</h2>
+                        
+                        <form class="profile-form" id="settingsForm">
+                            <div class="form-group form-full">
+                                <label for="currentPassword">Contraseña actual</label>
+                                <input type="password" id="currentPassword">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="newPassword">Nueva contraseña</label>
+                                <input type="password" id="newPassword">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirmar nueva contraseña</label>
+                                <input type="password" id="confirmPassword">
+                            </div>
+                            
+                            <div class="form-group form-full">
+                                <button type="button" class="save-btn" id="changePasswordBtn">Cambiar contraseña</button>
+                            </div>
+                            
+                            <div class="form-group form-full">
+                                <h3>Preferencias de notificación</h3>
+                                <div style="margin-top: 15px;">
+                                    <input type="checkbox" id="emailNotifications" checked>
+                                    <label for="emailNotifications">Recibir notificaciones por correo electrónico</label>
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <input type="checkbox" id="promoEmails" checked>
+                                    <label for="promoEmails">Recibir ofertas promocionales</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group form-full">
+                                <button type="button" class="save-btn" id="savePreferencesBtn">Guardar preferencias</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>VBDHOTEL</h3>
+                    <p>Encuentra los mejores hoteles al mejor precio. Compara entre miles de opciones y ahorra hasta un 50%.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Destinos populares</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Reynosa</a></li>
+                        <li><a href="#">Matamoros</a></li>
+                        <li><a href="#">Nuevo Laredo</a></li>
+                        <li><a href="#">Ciudad Victoria</a></li>
+                        <li><a href="#">Tampico</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Enlaces útiles</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html">Sobre nosotros</a></li>
+                        <li><a href="contact.html">Contacto</a></li>
+                        <li><a href="help.html">Ayuda</a></li>
+                        <li><a href="faq.html">Preguntas frecuentes</a></li>
+                        <li><a href="sitemap.html">Mapa del sitio</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="terms.html">Términos y condiciones</a></li>
+                        <li><a href="privacy.html">Política de privacidad</a></li>
+                        <li><a href="cookies.html">Política de cookies</a></li>
+                        <li><a href="legal.html">Aviso legal</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 VBDHOTEL. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+<script>
+// Sistema de usuarios en memoria
+let appData = {
+    registeredUsers: [
+        {
+            name: 'Usuario Demo',
+            email: 'demo@vbdhotel.com',
+            phone: '+52 899 123 4567',
+            password: 'demo123',
+            country: 'MX',
+            registrationDate: new Date().toISOString(),
+            preferences: {
+                emailNotifications: true,
+                promoEmails: true
+            }
+        }
+    ],
+    currentUser: null,
+    isLoggedIn: false,
+    userReservations: [], // Inicializamos vacío para priorizar localStorage
+    experienceReservations: [], // Reservaciones de experiencias
+    userFavorites: [
+        {
+            id: 1,
+            name: 'City Express Reynosa',
+            image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            location: 'Blvd. Morelos, Reynosa, Tamps.',
+            price: 850,
+            rating: 4.2
+        },
+        {
+            id: 2,
+            name: 'Fiesta Inn Reynosa',
+            image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            location: 'Col. Del Prado, Reynosa, Tamps.',
+            price: 1100,
+            rating: 4.3
+        },
+        {
+            id: 3,
+            name: 'Hotel Astromundo',
+            image: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+            location: 'Av. Morelos, Reynosa, Tamps.',
+            price: 750,
+            rating: 4.0
+        }
+    ]
+};
+
+// Funciones del modal de autenticación
+function showAuthModal() {
+    document.getElementById('authModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeAuthModal() {
+    document.getElementById('authModal').classList.remove('active');
+    document.body.style.overflow = '';
+    clearMessages();
+}
+
+function clearMessages() {
+    document.getElementById('registerSuccess').classList.remove('show');
+    document.getElementById('registerError').classList.remove('show');
+    document.getElementById('loginError').classList.remove('show');
+}
+
+function showRegister() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registerForm').style.display = 'block';
+    clearMessages();
+}
+
+function showLogin() {
+    document.getElementById('registerForm').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+    clearMessages();
+}
+
+// Función para verificar si el usuario ya está registrado
+function isUserRegistered(email) {
+    return appData.registeredUsers.some(user => user.email.toLowerCase() === email.toLowerCase());
+}
+
+// Función para verificar credenciales de login
+function validateLogin(email, password) {
+    return appData.registeredUsers.find(user => 
+        user.email.toLowerCase() === email.toLowerCase() && user.password === password
+    );
+}
+
+// Función de registro
+function handleRegister(event) {
+    event.preventDefault();
+    
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const confirmPassword = document.getElementById('regConfirmPassword').value;
+    
+    const errorDiv = document.getElementById('registerError');
+    const successDiv = document.getElementById('registerSuccess');
+    
+    clearMessages();
+    
+    // Validaciones
+    if (!name || !email || !phone || !password) {
+        errorDiv.textContent = 'Todos los campos son obligatorios';
+        errorDiv.classList.add('show');
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        errorDiv.textContent = 'Las contraseñas no coinciden';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    if (password.length < 6) {
+        errorDiv.textContent = 'La contraseña debe tener al menos 6 caracteres';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    if (isUserRegistered(email)) {
+        errorDiv.textContent = 'Ya existe una cuenta con este correo electrónico';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    // Registrar usuario
+    const newUser = {
+        name: name,
+        email: email,
+        phone: phone,
+        password: password,
+        country: 'MX',
+        registrationDate: new Date().toISOString(),
+        preferences: {
+            emailNotifications: true,
+            promoEmails: true
+        }
+    };
+    
+    appData.registeredUsers.push(newUser);
+    localStorage.setItem('registeredUsers', JSON.stringify(appData.registeredUsers));
+    
+    // Mostrar mensaje de éxito
+    successDiv.classList.add('show');
+    
+    // Limpiar formulario
+    document.getElementById('registerFormElement').reset();
+    
+    // Cambiar a formulario de login después de 2 segundos
+    setTimeout(() => {
+        showLogin();
+        successDiv.classList.remove('show');
+    }, 2000);
+}
+
+// Función de login
+function handleLogin(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    
+    const errorDiv = document.getElementById('loginError');
+    clearMessages();
+    
+    if (!email || !password) {
+        errorDiv.textContent = 'Por favor ingresa tu email y contraseña';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    const user = validateLogin(email, password);
+    
+    if (!user) {
+        errorDiv.textContent = 'Credenciales incorrectas. Verifica tu email y contraseña.';
+        errorDiv.classList.add('show');
+        return;
+    }
+    
+    // Login exitoso
+    appData.isLoggedIn = true;
+    appData.currentUser = user;
+    
+    // Actualizar localStorage
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    
+    closeAuthModal();
+    showNotification(`¡Bienvenido de nuevo, ${user.name}!`, 'success');
+    loadUserData();
+}
+
+// Sistema de notificaciones
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : '#d1ecf1'};
+        color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : '#0c5460'};
+        border: 1px solid ${type === 'success' ? '#c3e6cb' : type === 'error' ? '#f5c6cb' : '#bee5eb'};
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 10001;
+        max-width: 300px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        animation: slideIn 0.3s ease;
+    `;
+    
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; font-size: 18px; cursor: pointer; margin-left: 10px;">&times;</button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+// Función para cargar los datos del usuario
+function loadUserData() {
+    if (!appData.isLoggedIn || !appData.currentUser) {
+        showAuthModal();
+        showLogin();
+        return;
+    }
+    
+    const currentUser = appData.currentUser;
+    
+    // Actualizar la UI con los datos del usuario
+    document.getElementById('userName').textContent = currentUser.name || 'Usuario';
+    document.getElementById('userEmail').textContent = currentUser.email || 'usuario@ejemplo.com';
+    
+    // Llenar el formulario de perfil
+    document.getElementById('profileName').value = currentUser.name || '';
+    document.getElementById('profileEmail').value = currentUser.email || '';
+    document.getElementById('profilePhone').value = currentUser.phone || '';
+    document.getElementById('profileCountry').value = currentUser.country || 'MX';
+    
+    // Cargar preferencias
+    if (currentUser.preferences) {
+        document.getElementById('emailNotifications').checked = currentUser.preferences.emailNotifications || false;
+        document.getElementById('promoEmails').checked = currentUser.preferences.promoEmails || false;
+    }
+    
+    // Actualizar acciones de usuario
+    updateUserActions();
+    
+    // Cargar datos de las secciones
+    loadReservations();
+    loadDestinations();
+    loadExperiences(); // Nueva función para cargar experiencias
+    loadFavorites();
+    
+    // Configurar las pestañas
+    setupTabs();
+}
+
+// Nueva función para cargar experiencias del usuario actual
+function loadExperiences() {
+    const currentUser = appData.currentUser;
+    if (!currentUser) return;
+
+    const experiencesList = document.getElementById('experiencesList');
+    experiencesList.innerHTML = '';
+
+    // Cargar reservaciones de experiencias desde localStorage
+    const storedExperiences = JSON.parse(localStorage.getItem('experienceReservations') || '[]');
+    appData.experienceReservations = storedExperiences;
+
+    // Filtrar experiencias del usuario actual
+    const userExperiences = appData.experienceReservations.filter(
+        experience => experience.userEmail === currentUser.email
+    );
+
+    if (userExperiences.length === 0) {
+        experiencesList.innerHTML = `
+            <div class="no-reservations">
+                <i class="fas fa-star"></i>
+                <h3>No tienes experiencias reservadas</h3>
+                <p>Descubre y reserva experiencias únicas en Reynosa.</p>
+                <a href="experiences.html" class="btn">Explorar experiencias</a>
+            </div>
+        `;
+        return;
+    }
+
+    userExperiences.forEach(experience => {
+        const element = document.createElement('div');
+        element.className = 'experience-item';
+        
+        const statusClass = getStatusClass(experience.status);
+        const statusText = getStatusText(experience.status);
+        
+        element.innerHTML = `
+            <img src="${experience.experience.image}" alt="${experience.experience.name}" class="experience-img" 
+                 onerror="this.src='https://via.placeholder.com/200x120/0071ce/ffffff?text=Experiencia'">
+            <div class="experience-details">
+                <h3>${experience.experience.name}</h3>
+                <div class="experience-info">
+                    <div><i class="fas fa-map-marker-alt"></i> ${experience.experience.location.split(',')[0]}</div>
+                    <div><i class="fas fa-calendar-alt"></i> Fecha: ${formatDate(experience.date)}</div>
+                    <div><i class="fas fa-clock"></i> Hora: ${experience.time}</div>
+                    <div><i class="fas fa-users"></i> ${experience.participants}</div>
+                    <div><i class="fas fa-phone"></i> ${experience.guestPhone}</div>
+                </div>
+                <div class="experience-duration">
+                    <i class="fas fa-clock"></i> ${experience.duration}
+                </div>
+                <div class="experience-price">
+                    ${experience.total.toLocaleString()} MXN
+                </div>
+                <span class="reservation-status ${statusClass}">${statusText}</span>
+            </div>
+            <div class="reservation-actions">
+                <button class="action-btn btn-view" onclick="viewExperienceDetails(${experience.id})">
+                    <i class="fas fa-eye"></i> Ver detalles
+                </button>
+                ${(experience.status === 'confirmada' || experience.status === 'pendiente') ? 
+                `<button class="action-btn btn-cancel" onclick="deleteExperience(${experience.id})">
+                    <i class="fas fa-times"></i> Eliminar
+                </button>` : ''}
+            </div>
+        `;
+        
+        experiencesList.appendChild(element);
+    });
+}
+
+// Función para ver detalles de experiencia
+function viewExperienceDetails(experienceId) {
+    const experience = appData.experienceReservations.find(e => e.id === experienceId);
+    if (experience) {
+        const message = `Detalles de la experiencia:
+
+🌟 Experiencia: ${experience.experience.name}
+📍 Ubicación: ${experience.experience.location}
+📅 Fecha: ${formatDate(experience.date)}
+🕒 Hora: ${experience.time}
+👥 Participantes: ${experience.participants}
+📞 Teléfono: ${experience.guestPhone}
+⏱️ Duración: ${experience.duration}
+💰 Total: ${experience.total.toLocaleString()} MXN
+📋 Estado: ${getStatusText(experience.status)}
+
+Incluye:
+${experience.included ? experience.included.map(item => `• ${item}`).join('\n') : 'Información no disponible'}
+
+${experience.specialRequests ? `\nSolicitudes especiales:\n${experience.specialRequests}` : ''}`;
+        
+        alert(message);
+    }
+}
+
+// Función para eliminar experiencia definitivamente
+function deleteExperience(experienceId) {
+    if (confirm('¿Estás seguro de que deseas eliminar esta experiencia definitivamente? Esta acción no se puede deshacer.')) {
+        appData.experienceReservations = appData.experienceReservations.filter(e => e.id !== experienceId);
+        localStorage.setItem('experienceReservations', JSON.stringify(appData.experienceReservations));
+        showNotification('Experiencia eliminada definitivamente', 'success');
+        loadExperiences();
+    }
+}
+
+// Función para configurar las pestañas del sidebar
+function setupTabs() {
+    const tabLinks = document.querySelectorAll('.sidebar-menu a[data-tab]');
+    const tabSections = document.querySelectorAll('.account-tab');
+    const logoutLink = document.getElementById('logoutLink');
+    
+    tabLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Quitar clase active de todos los enlaces
+            tabLinks.forEach(tab => tab.classList.remove('active'));
+            // Agregar clase active al enlace clickeado
+            this.classList.add('active');
+            
+            // Ocultar todas las secciones
+            tabSections.forEach(section => section.style.display = 'none');
+            
+            // Mostrar la sección correspondiente
+            const tabId = this.dataset.tab + '-section';
+            const targetSection = document.getElementById(tabId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+        });
+    });
+    
+    // Configurar enlace de cerrar sesión
+    if (logoutLink) {
+        logoutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
+    }
+    
+    // Seleccionar pestaña por URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab') || 'profile';
+    const targetLink = document.querySelector(`.sidebar-menu a[data-tab="${tab}"]`);
+    if (targetLink) {
+        targetLink.click();
+    }
+}
+
+// Función para actualizar las acciones de usuario
+function updateUserActions() {
+    const userActions = document.getElementById('userActions');
+    
+    if (appData.isLoggedIn && appData.currentUser) {
+        userActions.innerHTML = `
+            <span>Hola, ${appData.currentUser.name}</span>
+            <a href="account.html">Mi cuenta</a>
+            <a href="#" id="logoutLinkHeader">Cerrar sesión</a>
+        `;
+        
+        const logoutHeaderLink = document.getElementById('logoutLinkHeader');
+        if (logoutHeaderLink) {
+            logoutHeaderLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        }
+    } else {
+        userActions.innerHTML = `
+            <a href="#" id="loginLink">Iniciar sesión</a>
+            <a href="#" id="registerLink" class="btn-register">Registrarse</a>
+        `;
+        
+        document.getElementById('loginLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            showAuthModal();
+            showLogin();
+        });
+        
+        document.getElementById('registerLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            showAuthModal();
+            showRegister();
+        });
+    }
+}
+
+// Función para cerrar sesión
+function logout() {
+    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+        appData.isLoggedIn = false;
+        appData.currentUser = null;
+        
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('currentUser');
+        
+        showNotification('Sesión cerrada correctamente', 'success');
+        
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1500);
+    }
+}
+
+// Función para cargar reservaciones y destinos del usuario actual
+function loadReservations() {
+    const currentUser = appData.currentUser;
+    if (!currentUser) return;
+    
+    const reservationsList = document.getElementById('reservationsList');
+    const historyList = document.getElementById('historyList');
+    
+    // Cargar reservaciones desde localStorage
+    const storedReservations = JSON.parse(localStorage.getItem('userReservations') || '[]');
+    appData.userReservations = storedReservations;
+    
+    // Filtrar reservaciones del usuario actual
+    const currentUserReservations = appData.userReservations.filter(
+        reservation => reservation.userEmail === currentUser.email
+    );
+    
+    // Separar reservaciones activas y historial
+    const activeReservations = currentUserReservations.filter(r => 
+        r.status === 'confirmada' || r.status === 'pendiente'
+    );
+    const pastReservations = currentUserReservations.filter(r => 
+        r.status === 'cancelada' || r.status === 'completada'
+    );
+    
+    // Cargar reservaciones activas
+    loadReservationList(reservationsList, activeReservations, 'No tienes reservaciones activas', 'Descubre los mejores hoteles y comienza a planear tu próximo viaje!');
+    
+    // Cargar historial
+    loadReservationList(historyList, pastReservations, 'No hay historial de reservaciones', 'Tu historial de reservaciones aparecerá aquí.');
+}
+
+// Función para cargar destinos del usuario actual
+function loadDestinations() {
+    const currentUser = appData.currentUser;
+    if (!currentUser) return;
+
+    const destinationsList = document.getElementById('destinationsList');
+    destinationsList.innerHTML = '';
+
+    // Cargar desde localStorage
+    const purchases = JSON.parse(localStorage.getItem('userPurchases') || '[]');
+    const userDestinations = purchases.filter(p => p.type === 'destination' && p.visitorEmail === currentUser.email);
+
+    if (userDestinations.length === 0) {
+        destinationsList.innerHTML = `
+            <div class="no-reservations">
+                <i class="fas fa-map-marked-alt"></i>
+                <h3>No tienes destinos comprados</h3>
+                <p>Explora y compra boletos para destinos en Reynosa.</p>
+                <a href="destinations.html" class="btn">Explorar destinos</a>
+            </div>
+        `;
+        return;
+    }
+
+    userDestinations.forEach(destination => {
+        const element = document.createElement('div');
+        element.className = 'reservation-item';
+        
+        const statusClass = getStatusClass(destination.status);
+        const statusText = getStatusText(destination.status);
+        
+        element.innerHTML = `
+            <img src="${destination.destination.image}" alt="${destination.destinationName}" class="reservation-img" 
+                 onerror="this.src='https://via.placeholder.com/200x120/0071ce/ffffff?text=Destino'">
+            <div class="reservation-details">
+                <h3>${destination.destinationName}</h3>
+                <div class="reservation-info">
+                    <div><i class="fas fa-map-marker-alt"></i> ${destination.destination.location}</div>
+                    <div><i class="fas fa-calendar-alt"></i> Visita: ${formatDate(destination.visitDate)}</div>
+                    <div><i class="fas fa-users"></i> Cantidad: ${destination.quantity} boletos</div>
+                    <div><i class="fas fa-dollar-sign"></i> Total: ${destination.totalPrice}</div>
+                </div>
+                <span class="reservation-status ${statusClass}">${statusText}</span>
+            </div>
+            <div class="reservation-actions">
+                <button class="action-btn btn-view" onclick="viewDestinationDetails('${destination.id}')">
+                    <i class="fas fa-eye"></i> Ver detalles
+                </button>
+                ${(destination.status === 'confirmed' || destination.status === 'pendiente') ? 
+                `<button class="action-btn btn-cancel" onclick="deleteDestination('${destination.id}')">
+                    <i class="fas fa-times"></i> Eliminar
+                </button>` : ''}
+            </div>
+        `;
+        
+        destinationsList.appendChild(element);
+    });
+}
+
+// Función para ver detalles de destino
+function viewDestinationDetails(destinationId) {
+    const purchases = JSON.parse(localStorage.getItem('userPurchases') || '[]');
+    const destination = purchases.find(p => p.id === destinationId);
+    if (destination) {
+        const message = `Detalles del destino:
+
+📍 Destino: ${destination.destinationName}
+🗺️ Ubicación: ${destination.destination.location}
+📅 Fecha de visita: ${formatDate(destination.visitDate)}
+🕒 Hora: ${destination.visitTime || 'No especificada'}
+👥 Cantidad: ${destination.quantity} boletos
+💰 Total: ${destination.totalPrice}
+📋 Estado: ${getStatusText(destination.status)}`;
+        
+        alert(message);
+    }
+}
+
+// Función para eliminar destino definitivamente
+function deleteDestination(destinationId) {
+    if (confirm('¿Estás seguro de que deseas eliminar este destino definitivamente? Esta acción no se puede deshacer.')) {
+        let purchases = JSON.parse(localStorage.getItem('userPurchases') || '[]');
+        purchases = purchases.filter(p => p.id !== destinationId);
+        localStorage.setItem('userPurchases', JSON.stringify(purchases));
+        showNotification('Destino eliminado definitivamente', 'success');
+        loadDestinations();
+    }
+}
+
+// Función para cargar lista de reservaciones
+function loadReservationList(container, reservations, emptyTitle, emptyMessage) {
+    container.innerHTML = '';
+    
+    if (reservations.length === 0) {
+        container.innerHTML = `
+            <div class="no-reservations">
+                <i class="fas fa-calendar-times"></i>
+                <h3>${emptyTitle}</h3>
+                <p>${emptyMessage}</p>
+                ${emptyTitle.includes('activas') ? '<a href="hotels.html" class="btn">Buscar hoteles</a>' : ''}
+            </div>
+        `;
+        return;
+    }
+    
+    reservations.forEach(reservation => {
+        const reservationElement = createReservationElement(reservation);
+        container.appendChild(reservationElement);
+    });
+}
+
+// Función para crear elemento de reservación
+function createReservationElement(reservation) {
+    const element = document.createElement('div');
+    element.className = 'reservation-item';
+    
+    const statusClass = getStatusClass(reservation.status);
+    const statusText = getStatusText(reservation.status);
+    
+    element.innerHTML = `
+        <img src="${reservation.hotel.image}" alt="${reservation.hotel.name}" class="reservation-img" 
+             onerror="this.src='https://via.placeholder.com/200x120/0071ce/ffffff?text=Hotel'">
+        <div class="reservation-details">
+            <h3>${reservation.hotel.name}</h3>
+            <div class="reservation-info">
+                <div><i class="fas fa-map-marker-alt"></i> ${reservation.hotel.location}</div>
+                <div><i class="fas fa-calendar-alt"></i> ${formatDate(reservation.checkin)} - ${formatDate(reservation.checkout)}</div>
+                <div><i class="fas fa-user"></i> ${reservation.guests}</div>
+                <div><i class="fas fa-bed"></i> ${reservation.roomType}</div>
+                <div><i class="fas fa-dollar-sign"></i> Total: ${reservation.total}</div>
+            </div>
+            <span class="reservation-status ${statusClass}">${statusText}</span>
+        </div>
+        <div class="reservation-actions">
+            <button class="action-btn btn-view" onclick="viewReservationDetails(${reservation.id})">
+                <i class="fas fa-eye"></i> Ver detalles
+            </button>
+            ${(reservation.status === 'confirmada' || reservation.status === 'pendiente') ? 
+            `<button class="action-btn btn-cancel" onclick="deleteReservation(${reservation.id})">
+                <i class="fas fa-times"></i> Eliminar
+            </button>` : ''}
+        </div>
+    `;
+    
+    return element;
+}
+
+// Función para obtener clase de estado
+function getStatusClass(status) {
+    switch(status) {
+        case 'confirmada': case 'confirmed': return 'status-confirmed';
+        case 'pendiente': return 'status-pending';
+        case 'cancelada': case 'completada': return 'status-cancelled';
+        default: return 'status-pending';
+    }
+}
+
+// Función para obtener texto de estado
+function getStatusText(status) {
+    switch(status) {
+        case 'confirmada': case 'confirmed': return 'Confirmada';
+        case 'pendiente': return 'Pendiente';
+        case 'cancelada': return 'Cancelada';
+        case 'completada': return 'Completada';
+        default: return 'Pendiente';
+    }
+}
+
+// Función para cargar favoritos
+function loadFavorites() {
+    const favoritesList = document.getElementById('favoritesList');
+    
+    if (appData.userFavorites.length === 0) {
+        favoritesList.innerHTML = `
+            <div class="no-reservations">
+                <i class="fas fa-heart"></i>
+                <h3>No tienes hoteles favoritos</h3>
+                <p>Agrega hoteles a tus favoritos haciendo clic en el corazón cuando explores nuestras opciones.</p>
+                <a href="hotels.html" class="btn">Explorar hoteles</a>
+            </div>
+        `;
+        return;
+    }
+    
+    favoritesList.innerHTML = '';
+    
+    appData.userFavorites.forEach(hotel => {
+        const starsHTML = '⭐'.repeat(Math.floor(hotel.rating));
+        
+        const hotelElement = document.createElement('div');
+        hotelElement.className = 'hotel-card';
+        hotelElement.innerHTML = `
+            <img src="${hotel.image}" alt="${hotel.name}" class="hotel-img"
+                 onerror="this.src='https://via.placeholder.com/300x200/0071ce/ffffff?text=Hotel'">
+            <div class="hotel-info">
+                <h3 class="hotel-name">${hotel.name}</h3>
+                <div class="hotel-location">
+                    <i class="fas fa-map-marker-alt"></i> ${hotel.location}
+                </div>
+                <div class="hotel-rating">
+                    ${starsHTML} ${hotel.rating}
+                </div>
+                <div class="hotel-price">${hotel.price} <span>por noche</span></div>
+                <div class="reservation-actions">
+                    <button class="action-btn btn-view" onclick="viewHotelDetails(${hotel.id})">Ver detalles</button>
+                    <button class="action-btn btn-cancel" onclick="removeFavorite(${hotel.id})">Quitar de favoritos</button>
+                </div>
+            </div>
+        `;
+        
+        favoritesList.appendChild(hotelElement);
+    });
+}
+
+// Función para formatear fecha
+function formatDate(dateString) {
+    const date = new Date(dateString + 'T00:00:00');
+    return date.toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
+// Función para ver detalles de reservación
+function viewReservationDetails(reservationId) {
+    const reservation = appData.userReservations.find(r => r.id === reservationId);
+    if (reservation) {
+        const checkinDate = formatDate(reservation.checkin);
+        const checkoutDate = formatDate(reservation.checkout);
+        const message = `Detalles de la reservación:
+
+🏨 Hotel: ${reservation.hotel.name}
+📍 Ubicación: ${reservation.hotel.location}
+📅 Check-in: ${checkinDate}
+📅 Check-out: ${checkoutDate}
+👥 Huéspedes: ${reservation.guests}
+🛏️ Habitación: ${reservation.roomType}
+💰 Total: ${reservation.total}
+📋 Estado: ${getStatusText(reservation.status)}`;
+        
+        alert(message);
+    }
+}
+
+// Función para eliminar reservación definitivamente
+function deleteReservation(reservationId) {
+    if (confirm('¿Estás seguro de que deseas eliminar esta reservación definitivamente? Esta acción no se puede deshacer.')) {
+        appData.userReservations = appData.userReservations.filter(r => r.id !== reservationId);
+        localStorage.setItem('userReservations', JSON.stringify(appData.userReservations));
+        showNotification('Reservación eliminada definitivamente', 'success');
+        loadReservations();
+    }
+}
+
+// Función para ver detalles del hotel
+function viewHotelDetails(hotelId) {
+    const hotel = appData.userFavorites.find(h => h.id === hotelId);
+    if (hotel) {
+        showNotification(`Redirigiendo a detalles de ${hotel.name}...`);
+        setTimeout(() => {
+            alert(`Detalles del hotel:\n\n🏨 ${hotel.name}\n📍 ${hotel.location}\n⭐ Calificación: ${hotel.rating}\n💰 Precio: ${hotel.price} por noche`);
+        }, 500);
+    }
+}
+
+// Función para quitar de favoritos
+function removeFavorite(hotelId) {
+    if (confirm('¿Deseas quitar este hotel de tus favoritos?')) {
+        const index = appData.userFavorites.findIndex(h => h.id === hotelId);
+        if (index !== -1) {
+            const hotelName = appData.userFavorites[index].name;
+            appData.userFavorites.splice(index, 1);
+            localStorage.setItem('userFavorites', JSON.stringify(appData.userFavorites));
+            showNotification(`${hotelName} eliminado de favoritos`, 'success');
+            loadFavorites();
+        }
+    }
+}
+
+// Función para guardar perfil
+function saveProfile() {
+    const name = document.getElementById('profileName').value.trim();
+    const email = document.getElementById('profileEmail').value.trim();
+    const phone = document.getElementById('profilePhone').value.trim();
+    const country = document.getElementById('profileCountry').value;
+    
+    if (!name || !email) {
+        showNotification('El nombre y email son obligatorios', 'error');
+        return;
+    }
+    
+    // Verificar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showNotification('Por favor ingresa un email válido', 'error');
+        return;
+    }
+    
+    // Actualizar usuario actual
+    appData.currentUser.name = name;
+    appData.currentUser.email = email;
+    appData.currentUser.phone = phone;
+    appData.currentUser.country = country;
+    
+    // Actualizar en registeredUsers
+    const userIndex = appData.registeredUsers.findIndex(u => u.email === email);
+    if (userIndex !== -1) {
+        appData.registeredUsers[userIndex] = { ...appData.registeredUsers[userIndex], ...appData.currentUser };
+    }
+    
+    // Sincronizar con localStorage
+    localStorage.setItem('currentUser', JSON.stringify(appData.currentUser));
+    localStorage.setItem('registeredUsers', JSON.stringify(appData.registeredUsers));
+    
+    // Actualizar UI
+    document.getElementById('userName').textContent = name;
+    document.getElementById('userEmail').textContent = email;
+    
+    showNotification('Perfil actualizado correctamente', 'success');
+    updateUserActions();
+}
+
+// Función para cambiar contraseña
+function changePassword() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        showNotification('Todos los campos son obligatorios', 'error');
+        return;
+    }
+    
+    if (currentPassword !== appData.currentUser.password) {
+        showNotification('La contraseña actual es incorrecta', 'error');
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        showNotification('La nueva contraseña debe tener al menos 6 caracteres', 'error');
+        return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+        showNotification('Las contraseñas no coinciden', 'error');
+        return;
+    }
+    
+    if (newPassword === currentPassword) {
+        showNotification('La nueva contraseña debe ser diferente a la actual', 'error');
+        return;
+    }
+    
+    // Actualizar contraseña
+    appData.currentUser.password = newPassword;
+    const userIndex = appData.registeredUsers.findIndex(u => u.email === appData.currentUser.email);
+    if (userIndex !== -1) {
+        appData.registeredUsers[userIndex].password = newPassword;
+    }
+    
+    // Sincronizar con localStorage
+    localStorage.setItem('registeredUsers', JSON.stringify(appData.registeredUsers));
+    
+    // Limpiar campos
+    document.getElementById('currentPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+    
+    showNotification('Contraseña actualizada correctamente', 'success');
+}
+
+// Función para guardar preferencias
+function savePreferences() {
+    const emailNotifications = document.getElementById('emailNotifications').checked;
+    const promoEmails = document.getElementById('promoEmails').checked;
+    
+    // Actualizar preferencias
+    if (!appData.currentUser.preferences) {
+        appData.currentUser.preferences = {};
+    }
+    
+    appData.currentUser.preferences.emailNotifications = emailNotifications;
+    appData.currentUser.preferences.promoEmails = promoEmails;
+    
+    // Actualizar en registeredUsers
+    const userIndex = appData.registeredUsers.findIndex(u => u.email === appData.currentUser.email);
+    if (userIndex !== -1) {
+        appData.registeredUsers[userIndex].preferences = appData.currentUser.preferences;
+    }
+    
+    // Sincronizar con localStorage
+    localStorage.setItem('registeredUsers', JSON.stringify(appData.registeredUsers));
+    
+    showNotification('Preferencias guardadas correctamente', 'success');
+}
+
+// Función para verificar sesión existente
+function checkExistingSession() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const currentUser = localStorage.getItem('currentUser');
+    
+    if (isLoggedIn && currentUser) {
+        try {
+            const userData = JSON.parse(currentUser);
+            appData.isLoggedIn = true;
+            appData.currentUser = userData;
+            
+            // Verificar que el usuario aún exista en registeredUsers
+            const userExists = appData.registeredUsers.find(u => u.email === userData.email);
+            if (!userExists) {
+                appData.registeredUsers.push(userData);
+            }
+            
+            return true;
+        } catch (error) {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('currentUser');
+            return false;
+        }
+    }
+    
+    return false;
+}
+
+// Función para sincronizar datos con localStorage
+function syncWithLocalStorage() {
+    // Sincronizar usuarios registrados
+    const storedUsers = localStorage.getItem('registeredUsers');
+    if (storedUsers) {
+        try {
+            const users = JSON.parse(storedUsers);
+            appData.registeredUsers = [...appData.registeredUsers, ...users.filter(u => 
+                !appData.registeredUsers.find(existing => existing.email === u.email)
+            )];
+        } catch (error) {
+            console.log('Error al sincronizar usuarios:', error);
+        }
+    }
+
+    // Sincronizar reservaciones
+    const storedReservations = localStorage.getItem('userReservations');
+    if (storedReservations) {
+        try {
+            appData.userReservations = JSON.parse(storedReservations);
+        } catch (error) {
+            console.log('Error al sincronizar reservaciones:', error);
+        }
+    } else {
+        // Si no hay reservaciones en localStorage, inicializar con datos predeterminados
+        appData.userReservations = [
+            {
+                id: 1,
+                userEmail: 'demo@vbdhotel.com',
+                hotel: {
+                    name: 'City Express Reynosa',
+                    image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                    location: 'Blvd. Morelos, Reynosa, Tamps.'
+                },
+                checkin: '2024-01-15',
+                checkout: '2024-01-20',
+                guests: '2 adultos, 0 niños',
+                roomType: 'Habitación Standard',
+                total: 4250,
+                status: 'confirmada'
+            },
+            {
+                id: 2,
+                userEmail: 'demo@vbdhotel.com',
+                hotel: {
+                    name: 'Holiday Inn Reynosa',
+                    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                    location: 'Av. Hidalgo, Reynosa, Tamps.'
+                },
+                checkin: '2024-02-05',
+                checkout: '2024-02-10',
+                guests: '2 adultos, 1 niño',
+                roomType: 'Habitación Deluxe',
+                total: 6000,
+                status: 'pendiente'
+            },
+            {
+                id: 3,
+                userEmail: 'demo@vbdhotel.com',
+                hotel: {
+                    name: 'Hampton Inn Reynosa',
+                    image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                    location: 'Col. Centro, Reynosa, Tamps.'
+                },
+                checkin: '2023-12-01',
+                checkout: '2023-12-05',
+                guests: '1 adulto',
+                roomType: 'Habitación Ejecutiva',
+                total: 3200,
+                status: 'completada'
+            }
+        ];
+        localStorage.setItem('userReservations', JSON.stringify(appData.userReservations));
+    }
+
+    // Sincronizar experiencias desde localStorage
+    const storedExperiences = localStorage.getItem('experienceReservations');
+    if (storedExperiences) {
+        try {
+            appData.experienceReservations = JSON.parse(storedExperiences);
+        } catch (error) {
+            console.log('Error al sincronizar experiencias:', error);
+            appData.experienceReservations = [];
+        }
+    }
+}
+
+// Inicializar cuando la página cargue
+document.addEventListener('DOMContentLoaded', function() {
+    // Sincronizar con localStorage primero
+    syncWithLocalStorage();
+    
+    // Verificar sesión existente
+    const hasExistingSession = checkExistingSession();
+    
+    // Auto-login con usuario demo para facilitar las pruebas
+    const urlParams = new URLSearchParams(window.location.search);
+    const demo = urlParams.get('demo');
+    
+    if (demo === 'true' && !hasExistingSession) {
+        appData.isLoggedIn = true;
+        appData.currentUser = appData.registeredUsers[0]; // Usuario demo
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('currentUser', JSON.stringify(appData.currentUser));
+    }
+    
+    // Verificar si hay parámetros en la URL para mostrar registro/login
+    const action = urlParams.get('action');
+    
+    if (action === 'register') {
+        showAuthModal();
+        showRegister();
+    } else if (action === 'login') {
+        showAuthModal();
+        showLogin();
+    }
+    
+    // Cargar datos del usuario
+    loadUserData();
+    
+    // Configurar formularios de autenticación
+    document.getElementById('registerFormElement').addEventListener('submit', handleRegister);
+    document.getElementById('loginFormElement').addEventListener('submit', handleLogin);
+    
+    // Configurar botones de acción
+    document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+    document.getElementById('changePasswordBtn').addEventListener('click', changePassword);
+    document.getElementById('savePreferencesBtn').addEventListener('click', savePreferences);
+    
+    // Configurar menú móvil
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    
+    menuToggle.addEventListener('click', function() {
+        navLinks.classList.toggle('active');
+    });
+    
+    // Cerrar modal al hacer clic fuera de él
+    document.getElementById('authModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAuthModal();
+        }
+    });
+    
+    // Cerrar menú móvil al hacer clic en un enlace
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+        });
+    });
+    
+    // Mensaje de bienvenida si es la primera vez
+    if (appData.isLoggedIn && appData.currentUser) {
+        setTimeout(() => {
+            showNotification(`¡Hola ${appData.currentUser.name}! Bienvenido a tu panel de cuenta.`, 'success');
+        }, 500);
+    }
+});
+</script>
+
+</body>
+</html>

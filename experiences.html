@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiencias en Reynosa - VBDHOTEL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --primary-color: #0071ce;
+            --secondary-color: #ff5a60;
+            --accent-color: #3cd070;
+            --dark-color: #1a1a1a;
+            --light-color: #f8f9fa;
+            --gray-color: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo span {
+            color: var(--secondary-color);
+        }
+        
+        .user-actions a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: var(--gray-color);
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .user-actions a:hover {
+            color: var(--primary-color);
+        }
+        
+        .user-actions .btn-register {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+        }
+        
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 20px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1599640842225-85d111c60e6b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Experiences Section */
+        .experiences-section {
+            padding: 60px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2rem;
+            color: var(--dark-color);
+        }
+        
+        .categories {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .category-btn {
+            padding: 10px 20px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .category-btn:hover,
+        .category-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .experiences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+        
+        .experience-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .experience-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .experience-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        .experience-info {
+            padding: 20px;
+        }
+        
+        .experience-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+        
+        .experience-location {
+            color: var(--gray-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .experience-location i {
+            margin-right: 5px;
+        }
+        
+        .experience-description {
+            margin-bottom: 15px;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .experience-duration {
+            background-color: var(--light-color);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .experience-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: #005fa3;
+        }
+        
+        /* Map Section */
+        .map-section {
+            padding: 60px 0;
+            background-color: var(--light-color);
+        }
+        
+        #experiencesMap {
+            height: 400px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Video Section */
+        .video-section {
+            padding: 60px 0;
+        }
+        
+        .video-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .video-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .video-info {
+            padding: 20px;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .auth-modal, .reservation-modal {
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .modal-header p {
+            color: var(--gray-color);
+        }
+
+        .auth-form, .reservation-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .auth-btn, .reserve-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .auth-btn:hover, .reserve-btn:hover {
+            background-color: #005fa3;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray-color);
+        }
+
+        .close-modal:hover {
+            color: var(--dark-color);
+        }
+
+        .modal-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray-color);
+        }
+
+        .modal-switch a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-switch a:hover {
+            text-decoration: underline;
+        }
+
+        .success-message, .error-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .success-message.show, .error-message.show {
+            display: block;
+        }
+
+        .experience-details {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .experience-details img {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .reservation-summary {
+            background-color: var(--light-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 60px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: white;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                margin: 10px 0;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .auth-modal, .reservation-modal {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .experiences-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal de Autenticación -->
+    <div class="modal-overlay" id="authModal">
+        <div class="auth-modal">
+            <button class="close-modal" onclick="closeAuthModal()">&times;</button>
+            
+            <!-- Registro -->
+            <div id="registerForm" class="auth-content">
+                <div class="modal-header">
+                    <h2>Crear cuenta</h2>
+                    <p>Únete a VBDHOTEL y disfruta de beneficios exclusivos</p>
+                </div>
+                
+                <div class="success-message" id="registerSuccess">
+                    <i class="fas fa-check-circle"></i>
+                    ¡Registro exitoso! Ahora puedes iniciar sesión con tus credenciales.
+                </div>
+                
+                <div class="error-message" id="registerError"></div>
+                
+                <form class="auth-form" id="registerFormElement">
+                    <div class="form-group">
+                        <label for="regName">Nombre completo</label>
+                        <input type="text" id="regName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regEmail">Correo electrónico</label>
+                        <input type="email" id="regEmail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regPhone">Teléfono</label>
+                        <input type="tel" id="regPhone" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regPassword">Contraseña</label>
+                        <input type="password" id="regPassword" required minlength="6">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regConfirmPassword">Confirmar contraseña</label>
+                        <input type="password" id="regConfirmPassword" required minlength="6">
+                    </div>
+                    
+                    <button type="submit" class="auth-btn">Crear cuenta</button>
+                </form>
+                
+                <div class="modal-switch">
+                    ¿Ya tienes cuenta? <a href="#" onclick="showLogin()">Iniciar sesión</a>
+                </div>
+            </div>
+            
+            <!-- Login -->
+            <div id="loginForm" class="auth-content" style="display: none;">
+                <div class="modal-header">
+                    <h2>Iniciar sesión</h2>
+                    <p>Accede a tu cuenta de VBDHOTEL</p>
+                </div>
+                
+                <div class="error-message" id="loginError"></div>
+                
+                <form class="auth-form" id="loginFormElement">
+                    <div class="form-group">
+                        <label for="loginEmail">Correo electrónico</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">Contraseña</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn">Iniciar sesión</button>
+                </form>
+                
+                <div class="modal-switch">
+                    ¿No tienes cuenta? <a href="#" onclick="showRegister()">Crear cuenta</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Reservación de Experiencias -->
+    <div class="modal-overlay" id="experienceModal">
+        <div class="reservation-modal">
+            <button class="close-modal" onclick="closeExperienceModal()">&times;</button>
+            
+            <div class="experience-details">
+                <img id="experienceModalImage" src="" alt="Experiencia">
+                <div>
+                    <h3 id="experienceModalName">Nombre de la Experiencia</h3>
+                    <p id="experienceModalLocation">Ubicación</p>
+                    <p class="price" id="experienceModalPrice">$0</p>
+                </div>
+            </div>
+            
+            <form class="reservation-form" id="experienceReservationForm">
+                <div class="form-group">
+                    <label for="expName">Nombre completo</label>
+                    <input type="text" id="expName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expEmail">Correo electrónico</label>
+                    <input type="email" id="expEmail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expPhone">Teléfono</label>
+                    <input type="tel" id="expPhone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expDate">Fecha preferida</label>
+                    <input type="date" id="expDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expTime">Hora preferida</label>
+                    <select id="expTime" required>
+                        <option value="">Seleccionar hora</option>
+                        <option value="09:00">9:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="14:00">2:00 PM</option>
+                        <option value="16:00">4:00 PM</option>
+                        <option value="18:00">6:00 PM</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expParticipants">Número de participantes</label>
+                    <select id="expParticipants" required>
+                        <option value="1">1 persona</option>
+                        <option value="2" selected>2 personas</option>
+                        <option value="3">3 personas</option>
+                        <option value="4">4 personas</option>
+                        <option value="5">5 personas</option>
+                        <option value="6">6+ personas</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expRequests">Solicitudes especiales (opcional)</label>
+                    <textarea id="expRequests" rows="3"></textarea>
+                </div>
+                
+                <div class="reservation-summary">
+                    <div class="summary-line">
+                        <span>Precio por persona:</span>
+                        <span id="pricePerPerson">$0</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Número de participantes:</span>
+                        <span id="totalParticipants">2</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Subtotal:</span>
+                        <span id="subtotalAmount">$0</span>
+                    </div>
+                    <div class="summary-line summary-total">
+                        <span>Total:</span>
+                        <span id="totalAmount">$0</span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="reserve-btn">Confirmar Reservación</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-top">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-hotel"></i>
+                    VBD<span>HOTEL</span>
+                </a>
+                <div class="user-actions" id="userActions">
+                    <a href="#" id="loginLink">Iniciar sesión</a>
+                    <a href="#" id="registerLink" class="btn-register">Registrarse</a>
+                </div>
+            </div>
+            <div class="header-nav">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="hotels.html">Hoteles</a></li>
+                    <li><a href="destinations.html">Destinos</a></li>
+                    <li><a href="experiences.html" class="active">Experiencias</a></li>
+                    <li><a href="#" id="accountLink">Mi cuenta</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Descubre Reynosa</h1>
+            <p>Explora las experiencias únicas que Reynosa tiene para ofrecer. Desde cultura y gastronomía hasta aventura y relax.</p>
+        </div>
+    </section>
+
+    <!-- Experiences Section -->
+    <section class="experiences-section">
+        <div class="container">
+            <h2 class="section-title">Experiencias en Reynosa</h2>
+            
+            <div class="categories">
+                <button class="category-btn active" data-category="all">Todas</button>
+                <button class="category-btn" data-category="cultural">Cultural</button>
+                <button class="category-btn" data-category="gastronomic">Gastronomía</button>
+                <button class="category-btn" data-category="adventure">Aventura</button>
+                <button class="category-btn" data-category="nature">Naturaleza</button>
+            </div>
+            
+            <div class="experiences-grid" id="experiencesGrid">
+                <!-- Las experiencias se cargarán dinámicamente con JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="container">
+            <h2 class="section-title">Ubicaciones de las Experiencias</h2>
+            <div id="experiencesMap"></div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="video-section">
+        <div class="container">
+            <h2 class="section-title">Conoce Reynosa</h2>
+            
+            <div class="video-container">
+                <div class="video-card">
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/MBFXJw7n-fU" title="Reynosa, Tamaulipas - Conoce México" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <h3>Conoce Reynosa, Tamaulipas</h3>
+                        <p>Un recorrido por los principales atractivos turísticos de Reynosa.</p>
+                    </div>
+                </div>
+                
+                <div class="video-card">
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/QFbNJbpVmXo" title="Gastronomía de Reynosa" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <h3>Sabores de la Frontera</h3>
+                        <p>Descubre la deliciosa gastronomía fronteriza de Reynosa.</p>
+                    </div>
+                </div>
+                
+                <div class="video-card">
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/dYlYYdOCBg8" title="Plaza Principal Reynosa" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <h3>Plaza Principal de Reynosa</h3>
+                        <p>Conoce el corazón histórico y cultural de la ciudad.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>VBDHOTEL</h3>
+                    <p>Encuentra los mejores hoteles al mejor precio. Compara entre miles de opciones y ahorra hasta un 50%.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Destinos populares</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Reynosa</a></li>
+                        <li><a href="#">Matamoros</a></li>
+                        <li><a href="#">Nuevo Laredo</a></li>
+                        <li><a href="#">Ciudad Victoria</a></li>
+                        <li><a href="#">Tampico</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Enlaces útiles</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html">Sobre nosotros</a></li>
+                        <li><a href="contact.html">Contacto</a></li>
+                        <li><a href="help.html">Ayuda</a></li>
+                        <li><a href="faq.html">Preguntas frecuentes</a></li>
+                        <li><a href="sitemap.html">Mapa del sitio</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="terms.html">Términos y condiciones</a></li>
+                        <li><a href="privacy.html">Política de privacidad</a></li>
+                        <li><a href="cookies.html">Política de cookies</a></li>
+                        <li><a href="legal.html">Aviso legal</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 VBDHOTEL. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Sistema de usuarios y datos (sincronizado con account.html e index.html)
+        let appData = {
+            registeredUsers: JSON.parse(localStorage.getItem('registeredUsers')) || [
+                {
+                    name: 'Usuario Demo',
+                    email: 'demo@vbdhotel.com',
+                    phone: '+52 899 123 4567',
+                    password: 'demo123',
+                    country: 'MX',
+                    registrationDate: new Date().toISOString(),
+                    preferences: {
+                        emailNotifications: true,
+                        promoEmails: true
+                    }
+                }
+            ],
+            currentUser: JSON.parse(localStorage.getItem('currentUser')),
+            isLoggedIn: localStorage.getItem('isLoggedIn') === 'true',
+            userReservations: JSON.parse(localStorage.getItem('userReservations')) || [],
+            experienceReservations: JSON.parse(localStorage.getItem('experienceReservations')) || []
+        };
+
+        // Base de datos de experiencias en Reynosa con ubicaciones reales
+        const experiences = [
+            {
+                id: 'museo-historico',
+                name: 'Museo Histórico de Reynosa',
+                category: 'cultural',
+                image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Calle Morelos 905, Centro, Reynosa, Tamps.',
+                position: [26.0743, -98.2967],
+                description: 'Descubre la fascinante historia de Reynosa y la región fronteriza a través de exhibiciones interactivas y artefactos históricos.',
+                duration: '2 horas',
+                price: 50,
+                included: ['Guía especializado', 'Material informativo', 'Acceso a todas las salas']
+            },
+            {
+                id: 'tour-gastronomico',
+                name: 'Tour Gastronómico Fronterizo',
+                category: 'gastronomic',
+                image: 'https://images.unsplash.com/photo-1551782450-17144efb9c50?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Plaza Principal, Centro, Reynosa, Tamps.',
+                position: [26.0751, -98.2963],
+                description: 'Degusta la auténtica cocina fronteriza en un recorrido por los mejores restaurantes y puestos callejeros de Reynosa.',
+                duration: '4 horas',
+                price: 600,
+                included: ['Degustación en 5 lugares', 'Guía gastronómico', 'Bebidas incluidas', 'Recetas tradicionales']
+            },
+            {
+                id: 'parque-cultural',
+                name: 'Ecoturismo en Parque Cultural',
+                category: 'nature',
+                image: 'https://images.unsplash.com/photo-1530549387789-4c1017266635?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Parque Cultural Reynosa, Col. Doctores, Reynosa, Tamps.',
+                position: [26.0692, -98.3045],
+                description: 'Explora los senderos naturales, observa aves locales y disfruta de actividades al aire libre en el corazón de Reynosa.',
+                duration: '3 horas',
+                price: 200,
+                included: ['Guía naturalista', 'Binoculares', 'Agua y snacks', 'Mapa de senderos']
+            },
+            {
+                id: 'rio-bravo',
+                name: 'Paseo en el Río Bravo',
+                category: 'nature',
+                image: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Puente Internacional, Reynosa-McAllen',
+                position: [26.0797, -98.2889],
+                description: 'Disfruta de un recorrido tranquilo por el Río Bravo, observando la vida silvestre y el paisaje fronterizo único.',
+                duration: '2.5 horas',
+                price: 350,
+                included: ['Paseo en lancha', 'Guía especializado', 'Equipo de seguridad', 'Refrigerio']
+            },
+            {
+                id: 'arte-urbano',
+                name: 'Arte Urbano en Reynosa',
+                category: 'cultural',
+                image: 'https://images.unsplash.com/photo-1519925610903-381054cc2a1c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Av. Morelos, Zona Centro, Reynosa, Tamps.',
+                position: [26.0758, -98.2954],
+                description: 'Recorrido guiado por los murales y obras de arte urbano que adornan las calles de Reynosa, mostrando la vibrante escena cultural.',
+                duration: '2.5 horas',
+                price: 250,
+                included: ['Guía artístico', 'Historia de los murales', 'Fotografías profesionales', 'Mapa artístico']
+            },
+            {
+                id: 'cocina-nortena',
+                name: 'Clase de Cocina Norteña',
+                category: 'gastronomic',
+                image: 'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Escuela de Gastronomía, Blvd. Morelos 1200, Reynosa, Tamps.',
+                position: [26.0811, -98.3001],
+                description: 'Aprende a preparar platillos tradicionales de la cocina norteña mexicana con chefs expertos en un ambiente divertido.',
+                duration: '4 horas',
+                price: 800,
+                included: ['Chef instructor', 'Todos los ingredientes', 'Delantal y recetas', 'Comida incluida']
+            },
+            {
+                id: 'mercado-tradicional',
+                name: 'Mercado Tradicional Zaragoza',
+                category: 'cultural',
+                image: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Mercado Zaragoza, Calle Zaragoza, Centro, Reynosa, Tamps.',
+                position: [26.0735, -98.2978],
+                description: 'Sumérgete en la cultura local visitando el mercado más tradicional de Reynosa, conociendo artesanos y productos típicos.',
+                duration: '3 horas',
+                price: 300,
+                included: ['Guía local', 'Degustación de productos', 'Souvenirs incluidos', 'Transporte incluido']
+            },
+            {
+                id: 'ciclismo-urbano',
+                name: 'Ciclismo Urbano por Reynosa',
+                category: 'adventure',
+                image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Plaza de Armas, Centro, Reynosa, Tamps.',
+                position: [26.0746, -98.2961],
+                description: 'Explora Reynosa en bicicleta visitando los principales puntos de interés, parques y zonas históricas de la ciudad.',
+                duration: '3 horas',
+                price: 400,
+                included: ['Bicicleta y casco', 'Guía ciclista', 'Agua y snacks', 'Seguro de accidentes']
+            },
+            {
+                id: 'fotografia-urbana',
+                name: 'Workshop de Fotografía Urbana',
+                category: 'cultural',
+                image: 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                location: 'Centro Histórico de Reynosa, Tamps.',
+                position: [26.0749, -98.2965],
+                description: 'Aprende técnicas de fotografía urbana mientras capturas la esencia y belleza de Reynosa con un fotógrafo profesional.',
+                duration: '5 horas',
+                price: 750,
+                included: ['Instructor profesional', 'Técnicas avanzadas', 'Edición básica', 'Certificado de participación']
+            }
+        ];
+
+        let selectedExperience = null;
+
+        // Funciones del modal de autenticación
+        function showAuthModal() {
+            document.getElementById('authModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+            document.body.style.overflow = '';
+            clearMessages();
+        }
+
+        function clearMessages() {
+            document.getElementById('registerSuccess').classList.remove('show');
+            document.getElementById('registerError').classList.remove('show');
+            document.getElementById('loginError').classList.remove('show');
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            clearMessages();
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            clearMessages();
+        }
+
+        // Funciones del modal de experiencias
+        function showExperienceModal(experienceId) {
+            const experience = experiences.find(e => e.id === experienceId);
+            if (!experience) return;
+
+            selectedExperience = experience;
+            
+            // Llenar información de la experiencia
+            document.getElementById('experienceModalImage').src = experience.image;
+            document.getElementById('experienceModalName').textContent = experience.name;
+            document.getElementById('experienceModalLocation').textContent = experience.location;
+            document.getElementById('experienceModalPrice').textContent = `${experience.price} MXN`;
+            
+            // Prellenar datos del usuario si está logueado
+            if (appData.isLoggedIn && appData.currentUser) {
+                document.getElementById('expName').value = appData.currentUser.name || '';
+                document.getElementById('expEmail').value = appData.currentUser.email || '';
+                document.getElementById('expPhone').value = appData.currentUser.phone || '';
+            }
+            
+            // Configurar fecha mínima
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('expDate').setAttribute('min', today);
+            
+            // Mostrar modal
+            document.getElementById('experienceModal').classList.add('active');
+            updateExperienceSummary();
+        }
+
+        function closeExperienceModal() {
+            document.getElementById('experienceModal').classList.remove('active');
+        }
+
+        function updateExperienceSummary() {
+            if (!selectedExperience) return;
+            
+            const participants = parseInt(document.getElementById('expParticipants').value);
+            const pricePerPerson = selectedExperience.price;
+            const total = pricePerPerson * participants;
+            
+            document.getElementById('pricePerPerson').textContent = `${pricePerPerson}`;
+            document.getElementById('totalParticipants').textContent = participants;
+            document.getElementById('subtotalAmount').textContent = `${total.toLocaleString()}`;
+            document.getElementById('totalAmount').textContent = `${total.toLocaleString()}`;
+        }
+
+        // Función para verificar si el usuario ya está registrado
+        function isUserRegistered(email) {
+            return appData.registeredUsers.some(user => user.email.toLowerCase() === email.toLowerCase());
+        }
+
+        // Función para verificar credenciales de login
+        function validateLogin(email, password) {
+            return appData.registeredUsers.find(user => 
+                user.email.toLowerCase() === email.toLowerCase() && user.password === password
+            );
+        }
+
+        // Función de registro
+        function handleRegister(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            
+            const errorDiv = document.getElementById('registerError');
+            const successDiv = document.getElementById('registerSuccess');
+            
+            clearMessages();
+            
+            // Validaciones
+            if (!name || !email || !phone || !password) {
+                errorDiv.textContent = 'Todos los campos son obligatorios';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Las contraseñas no coinciden';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            if (password.length < 6) {
+                errorDiv.textContent = 'La contraseña debe tener al menos 6 caracteres';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            if (isUserRegistered(email)) {
+                errorDiv.textContent = 'Ya existe una cuenta con este correo electrónico';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // Registrar usuario
+            const newUser = {
+                name: name,
+                email: email,
+                phone: phone,
+                password: password,
+                country: 'MX',
+                registrationDate: new Date().toISOString(),
+                preferences: {
+                    emailNotifications: true,
+                    promoEmails: true
+                }
+            };
+            
+            appData.registeredUsers.push(newUser);
+            localStorage.setItem('registeredUsers', JSON.stringify(appData.registeredUsers));
+            
+            // Mostrar mensaje de éxito
+            successDiv.classList.add('show');
+            
+            // Limpiar formulario
+            document.getElementById('registerFormElement').reset();
+            
+            // Cambiar a formulario de login después de 2 segundos
+            setTimeout(() => {
+                showLogin();
+                successDiv.classList.remove('show');
+            }, 2000);
+        }
+
+        // Función de login
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            const errorDiv = document.getElementById('loginError');
+            clearMessages();
+            
+            if (!email || !password) {
+                errorDiv.textContent = 'Por favor ingresa tu email y contraseña';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            const user = validateLogin(email, password);
+            
+            if (!user) {
+                errorDiv.textContent = 'Credenciales incorrectas. Verifica tu email y contraseña.';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // Login exitoso
+            appData.isLoggedIn = true;
+            appData.currentUser = user;
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            
+            closeAuthModal();
+            showNotification(`¡Bienvenido de nuevo, ${user.name}!`, 'success');
+            updateUserActions();
+        }
+
+        // Función para manejar reservaciones de experiencias
+        function handleExperienceReservation(event) {
+            event.preventDefault();
+            
+            if (!appData.isLoggedIn) {
+                showNotification('Debes iniciar sesión para hacer una reservación', 'error');
+                closeExperienceModal();
+                showAuthModal();
+                showLogin();
+                return;
+            }
+            
+            const name = document.getElementById('expName').value.trim();
+            const email = document.getElementById('expEmail').value.trim();
+            const phone = document.getElementById('expPhone').value.trim();
+            const date = document.getElementById('expDate').value;
+            const time = document.getElementById('expTime').value;
+            const participants = document.getElementById('expParticipants').value;
+            
+            // Validaciones adicionales
+            if (!name || !email || !phone || !date || !time || !participants) {
+                showNotification('Por favor completa todos los campos obligatorios', 'error');
+                return;
+            }
+
+            // Validar formato de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Por favor ingresa un correo electrónico válido', 'error');
+                return;
+            }
+
+            // Validar formato de teléfono
+            const phoneRegex = /^\+?\d{10,15}$/;
+            if (!phoneRegex.test(phone)) {
+                showNotification('Por favor ingresa un número de teléfono válido', 'error');
+                return;
+            }
+
+            // Validar fecha
+            const today = new Date().toISOString().split('T')[0];
+            if (date < today) {
+                showNotification('La fecha seleccionada no puede ser anterior a hoy', 'error');
+                return;
+            }
+            
+            const reservationData = {
+                id: Date.now(),
+                type: 'experience',
+                userEmail: appData.currentUser.email,
+                experience: {
+                    name: selectedExperience.name,
+                    image: selectedExperience.image,
+                    location: selectedExperience.location,
+                    category: selectedExperience.category
+                },
+                date: date,
+                time: time,
+                participants: participants + ' personas',
+                total: parseInt(document.getElementById('totalAmount').textContent.replace(/[$,]/g, '')),
+                status: 'confirmada',
+                guestName: name,
+                guestPhone: phone,
+                specialRequests: document.getElementById('expRequests').value || '',
+                duration: selectedExperience.duration,
+                included: selectedExperience.included
+            };
+            
+            // Guardar reservación
+            try {
+                appData.experienceReservations.push(reservationData);
+                localStorage.setItem('experienceReservations', JSON.stringify(appData.experienceReservations));
+                closeExperienceModal();
+                showNotification('¡Experiencia reservada exitosamente! Puedes ver los detalles en tu cuenta.', 'success');
+                document.getElementById('experienceReservationForm').reset();
+            } catch (error) {
+                showNotification('Error al guardar la reservación. Por favor intenta de nuevo.', 'error');
+                console.error('Error saving reservation:', error);
+            }
+        }
+
+        // Sistema de notificaciones
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : '#d1ecf1'};
+                color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : '#0c5460'};
+                border: 1px solid ${type === 'success' ? '#c3e6cb' : type === 'error' ? '#f5c6cb' : '#bee5eb'};
+                padding: 15px 20px;
+                border-radius: 8px;
+                z-index: 10001;
+                max-width: 300px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                animation: slideIn 0.3s ease;
+            `;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; font-size: 18px; cursor: pointer; margin-left: 10px;">&times;</button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Función para actualizar las acciones de usuario
+        function updateUserActions() {
+            const userActions = document.getElementById('userActions');
+            
+            if (appData.isLoggedIn && appData.currentUser) {
+                userActions.innerHTML = `
+                    <span>Hola, ${appData.currentUser.name}</span>
+                    <a href="account.html">Mi cuenta</a>
+                    <a href="#" id="logoutLinkHeader">Cerrar sesión</a>
+                `;
+                
+                document.getElementById('logoutLinkHeader').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logout();
+                });
+            } else {
+                userActions.innerHTML = `
+                    <a href="#" id="loginLink">Iniciar sesión</a>
+                    <a href="#" id="registerLink" class="btn-register">Registrarse</a>
+                `;
+                
+                document.getElementById('loginLink').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showAuthModal();
+                    showLogin();
+                });
+                
+                document.getElementById('registerLink').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showAuthModal();
+                    showRegister();
+                });
+            }
+        }
+
+        // Función para cerrar sesión
+        function logout() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                appData.isLoggedIn = false;
+                appData.currentUser = null;
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('currentUser');
+                showNotification('Sesión cerrada correctamente', 'success');
+                updateUserActions();
+            }
+        }
+
+        // Función para manejar el clic en "Mi cuenta"
+        function handleAccountClick(e) {
+            e.preventDefault();
+            
+            if (appData.isLoggedIn) {
+                window.location.href = 'account.html';
+            } else {
+                showAuthModal();
+                showLogin();
+            }
+        }
+
+        // Función para cargar las experiencias en el grid
+        function loadExperiences() {
+            const grid = document.getElementById('experiencesGrid');
+            grid.innerHTML = '';
+            
+            experiences.forEach(experience => {
+                const card = document.createElement('div');
+                card.className = 'experience-card';
+                card.setAttribute('data-category', experience.category);
+                
+                card.innerHTML = `
+                    <img src="${experience.image}" alt="${experience.name}" class="experience-img"
+                         onerror="this.src='https://via.placeholder.com/400x200/0071ce/ffffff?text=Experiencia'">
+                    <div class="experience-info">
+                        <h3 class="experience-title">${experience.name}</h3>
+                        <div class="experience-location">
+                            <i class="fas fa-map-marker-alt"></i> ${experience.location.split(',')[0]}
+                        </div>
+                        <p class="experience-description">${experience.description}</p>
+                        <div class="experience-duration">
+                            <i class="fas fa-clock"></i> ${experience.duration}
+                        </div>
+                        <div class="experience-price">${experience.price} MXN <span style="font-size: 0.8rem; font-weight: normal; color: var(--gray-color);">por persona</span></div>
+                        <button onclick="showExperienceModal('${experience.id}')" class="btn">Reservar experiencia</button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Función para inicializar el mapa
+        function initExperiencesMap() {
+            const reynosa = [26.0743, -98.2967];
+            const map = L.map('experiencesMap').setView(reynosa, 13);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Agregar marcadores para cada experiencia
+            experiences.forEach(experience => {
+                const marker = L.marker(experience.position).addTo(map);
+                marker.bindPopup(`
+                    <div style="min-width: 250px;">
+                        <img src="${experience.image}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 4px; margin-bottom: 10px;"
+                             onerror="this.src='https://via.placeholder.com/250x120/0071ce/ffffff?text=Experiencia'">
+                        <strong>${experience.name}</strong><br>
+                        <small style="color: #666;">${experience.location}</small><br>
+                        <p style="margin: 8px 0; font-size: 12px; line-height: 1.3;">${experience.description}</p>
+                        <div style="margin: 8px 0;">
+                            <span style="background: #f0f0f0; padding: 3px 8px; border-radius: 10px; font-size: 11px;">
+                                <i class="fas fa-clock"></i> ${experience.duration}
+                            </span>
+                        </div>
+                        <div style="margin: 8px 0;">
+                            <strong style="color: #0071ce;">${experience.price} MXN por persona</strong>
+                        </div>
+                        <button onclick="showExperienceModal('${experience.id}')" 
+                                style="background: #ff5a60; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%;">
+                            Reservar
+                        </button>
+                    </div>
+                `);
+            });
+        }
+
+        // Función para filtrar experiencias
+        function filterExperiences(category) {
+            const cards = document.querySelectorAll('.experience-card');
+            
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Inicializar cuando la página cargue
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar experiencias
+            loadExperiences();
+            
+            // Inicializar mapa
+            initExperiencesMap();
+            
+            // Configurar event listeners para formularios
+            document.getElementById('registerFormElement').addEventListener('submit', handleRegister);
+            document.getElementById('loginFormElement').addEventListener('submit', handleLogin);
+            document.getElementById('experienceReservationForm').addEventListener('submit', handleExperienceReservation);
+            
+            // Configurar enlace "Mi cuenta"
+            document.getElementById('accountLink').addEventListener('click', handleAccountClick);
+            
+            // Event listeners para actualizar resumen
+            document.getElementById('expParticipants').addEventListener('change', updateExperienceSummary);
+            
+            // Toggle mobile menu
+            document.getElementById('menuToggle').addEventListener('click', function() {
+                document.getElementById('navLinks').classList.toggle('active');
+            });
+            
+            // Filter experiences by category
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const category = this.dataset.category;
+                    filterExperiences(category);
+                });
+            });
+            
+            // Cerrar modales al hacer clic fuera
+            document.getElementById('authModal').addEventListener('click', function(e) {
+                if (e.target === this) closeAuthModal();
+            });
+            
+            document.getElementById('experienceModal').addEventListener('click', function(e) {
+                if (e.target === this) closeExperienceModal();
+            });
+            
+            // Event listener para tecla ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeAuthModal();
+                    closeExperienceModal();
+                }
+            });
+            
+            // Actualizar UI basada en estado de login
+            updateUserActions();
+        });
+    </script>
+</body>
+</html>
